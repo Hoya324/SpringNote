@@ -8,6 +8,7 @@
 
 - 스프링 프레임워크
 <img width="535" alt="스크린샷 2022-12-14 오후 2 42 25" src="https://user-images.githubusercontent.com/96857599/207515510-8efba835-ec80-4494-adff-46d272477c18.png">
+회원 서비스
 
 - 스프링 부트
 <img width="518" alt="스크린샷 2022-12-14 오후 2 44 02" src="https://user-images.githubusercontent.com/96857599/207515758-3c53c601-b25e-43ec-88d5-cf084f799494.png">
@@ -154,7 +155,7 @@
 
 #### 회원 서비스
 
-5. MemebrService 인터페이스를 만들어주고, 회원 가입, 회원 조회 기능을 넣어준다.
+5. MemberService 인터페이스를 만들어주고, 회원 가입, 회원 조회 기능을 넣어준다.
 
 <img width="936" alt="스크린샷 2022-12-17 오후 4 29 29" src="https://user-images.githubusercontent.com/96857599/208230993-f72cc678-443a-4605-929e-e48d99b785bb.png">
 
