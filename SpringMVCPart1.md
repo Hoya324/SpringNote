@@ -2776,6 +2776,7 @@ defaultValue는 빈 문자의 경우에도 설정한 기본 값이 적용된다.
 객체에 getUsername() , setUsername() 메서드가 있으면, 이 객체는 username 이라는 프로퍼티를 가지고 있다.
 username 프로퍼티의 값을 변경하면 setUsername() 이 호출되고, 조회하면 getUsername() 이 호출된다.
 ```java
+@Data
 class HelloData {
       getUsername();
       setUsername();
