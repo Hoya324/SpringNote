@@ -2859,7 +2859,8 @@ HTTP message body에 데이터를 직접 담아서 요청
 - **HttpEntity**: HTTP header, body 정보를 편리하게 조회
 	- 메시지 바디 정보를 직접 조회
 	- **요청 파라미터를 조회하는 기능과 관계 없음 @RequestParam X, @ModelAttribute X **
-		- 요청파라미터는 GET에 queryParameter 오는 것,
+		- 요청파라미터는 GET에 queryParameter 오는 것, content Type이 x-www-form-urlencoded인 경우에만 사용
+	
 - **HttpEntity는** **응답에도** 사용 가능
 	- 메시지 바디 정보 직접 반환 
 	- 헤더 정보 포함 가능
@@ -2872,9 +2873,244 @@ HTTP message body에 데이터를 직접 담아서 요청
 	- HTTP 상태 코드 설정 가능, 응답에서 사용
 	- 'return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED)'
 	
+**HttpHeaders**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 07 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/f383e3bd-628a-4a50-b281-a850083a28e3">
 
 > 참고
 
 > 스프링MVC 내부에서 HTTP 메시지 바디를 읽어서 문자나 객체로 변환해서 전달해주는데, 이때 HTTP
 메시지 컨버터( HttpMessageConverter )라는 기능을 사용한다. 이것은 조금 뒤에 HTTP 메시지 컨버터에서 자세히 설명한다.
+	
+### 가장 많이 사용한다.
+**@RequestBody - requestBodyStringV4**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 03 45" src="https://github.com/Hoya324/SpringNote/assets/96857599/ac971152-6c39-464b-b8e8-8055f7bb9e5f">
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 04 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/290d995f-0ca0-4108-b794-1d342e8066bf">
+	
+	
+**@RequestBody**
+@RequestBody 를 사용하면 HTTP 메시지 바디 정보를 편리하게 조회할 수 있다. 참고로 헤더 정보가 필요하다면 HttpEntity 를 사용하거나 @RequestHeader 를 사용하면 된다.
+
+**⭐️이렇게 메시지 바디를 직접 조회하는 기능은 요청 파라미터를 조회하는 @RequestParam , @ModelAttribute 와는 전혀 관계가 없다.**
+	
+**⭐️요청 파라미터 vs HTTP 메시지 바디**
+	
+- 요청 파라미터를 조회하는 기능: @RequestParam , @ModelAttribute 
+- HTTP 메시지 바디를 직접 조회하는 기능: @RequestBody
+
+**@ResponseBody**
+
+@ResponseBody 를 사용하면 응답 결과를 HTTP 메시지 바디에 직접 담아서 전달할 수 있다. 물론 이 경우에도 view를 사용하지 않는다.
+
+
+### HTTP 요청 메시지 - JSON
+
+이번에는 HTTP API에서 주로 사용하는 JSON 데이터 형식을 조회해보자.
+
+기존 서블릿에서 사용했던 방식과 비슷하게 시작해보자. 
+	
+**RequestBodyJsonController**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 18 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/ad7ee7cf-064a-4d0f-ad65-55253d9c50cb">
+
+- HttpServletRequest를 사용해서 직접 HTTP 메시지 바디에서 데이터를 읽어와서, 문자로 변환한다.
+- 문자로 된 JSON 데이터를 Jackson 라이브러리인 objectMapper 를 사용해서 자바 객체로 변환한다.
+
+	
+	
+**requestBodyJsonV2 - @RequestBody 문자 변환**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 23 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/c4b6805a-69c0-4a32-b0f9-6f5c7b82067a">
+
+	
+- 이전에 학습했던 @RequestBody 를 사용해서 HTTP 메시지에서 데이터를 꺼내고 messageBody에 저장한다.
+- 문자로 된 JSON 데이터인 messageBody 를 objectMapper 를 통해서 자바 객체로 변환한다.
+	
+**문자로 변환하고 다시 json으로 변환하는 과정이 불편하다. @ModelAttribute처럼 한번에 객체로 변환할 수는 없을까?**
+	
+	
+**requestBodyJsonV3 - @RequestBody 객체 변환**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 11 25 16" src="https://github.com/Hoya324/SpringNote/assets/96857599/343b6066-9e08-4b03-aad6-cbd3e9091be4">
+	
+**@RequestBody 객체 파라미터**
+- @RequestBody HelloData data
+- @RequestBody 에 직접 만든 객체를 지정할 수 있다.
+
+HttpEntity , @RequestBody 를 사용하면 HTTP 메시지 컨버터가 HTTP 메시지 바디의 내용을 우리가 원하는 문자나 객체 등으로 변환해준다.
+HTTP 메시지 컨버터는 문자 뿐만 아니라 JSON도 객체로 변환해주는데,
+우리가 방금 V2에서 했던 작업을 대신 처리해준다.(HelloData data = objectMapper.readValue(messageBody, HelloData.class);)
+	
+자세한 내용은 뒤에 HTTP 메시지 컨버터에서 다룬다. 
+	
+**@RequestBody는 생략 불가능**
+@ModelAttribute 에서 학습한 내용을 떠올려보자.
+	
+스프링은 @ModelAttribute , @RequestParam 과 같은 해당 애노테이션을 생략시 다음과 같은 규칙을 적용한다.
+
+- String , int , Integer 같은 단순 타입 = @RequestParam
+- 나머지 = @ModelAttribute (argument resolver 로 지정해둔 타입 외)
+	
+따라서 이 경우 HelloData에 @RequestBody 를 생략하면 @ModelAttribute 가 적용되어버린다. 
+
+HelloData data -> @ModelAttribute HelloData data
+따라서 생략하면 HTTP 메시지 바디가 아니라 요청 파라미터를 처리하게 된다.
+	
+> 주의
+	
+> HTTP 요청시에 content-type이 application/json인지 꼭! 확인해야 한다. 그래야 JSON을 처리할 수
+있는 HTTP 메시지 컨버터가 실행된다.
+
+물론 앞서 배운 것과 같이 HttpEntity를 사용해도 된다.
+
+**requestBodyJsonV4 - HttpEntity**	
+<img width="1182" alt="스크린샷 2023-05-10 오후 11 34 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/ed10a0ab-b0ee-4e96-97cb-737ce13be66c">
+
+<img width="1204" alt="스크린샷 2023-05-10 오후 11 36 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/4452258d-9d5b-42df-8fb3-a87d74d7c79b">
+
+**@ResponseBody**
+	
+응답의 경우에도 @ResponseBody 를 사용하면 해당 객체를 HTTP 메시지 바디에 직접 넣어줄 수 있다.
+물론 이 경우에도 HttpEntity 를 사용해도 된다.
+
+- @RequestBody 요청
+	- JSON 요청 -> HTTP 메시지 컨버터 -> 객체
+- @ResponseBody 응답
+	- 객체 -> HTTP 메시지 컨버터 -> JSON 응답
+
+### HTTP 응답 - 정적 리소스, 뷰 템플릿
+
+응답 데이터는 이미 앞에서 일부 다룬 내용들이지만, 응답 부분에 초점을 맞추어서 정리해보자.
+스프링(서버)에서 응답 데이터를 만드는 방법은 크게 3가지이다.
+	
+- 정적 리소스
+	- 예) 웹 브라우저에 정적인 HTML, css, js를 제공할 때는, 정적 리소스를 사용한다.
+- 뷰 템플릿 사용
+	- 예) 웹 브라우저에 동적인 HTML을 제공할 때는 뷰 템플릿을 사용한다.
+- HTTP 메시지 사용
+	- HTTP API를 제공하는 경우에는 HTML이 아니라 데이터를 전달해야 하므로, HTTP 메시지 바디에 JSON 같은 형식으로 데이터를 실어 보낸다.
+	
+	
+**정적 리소스**
+스프링 부트는 클래스패스의 다음 디렉토리에 있는 정적 리소스를 제공한다. 
+/static , /public , /resources , /META-INF/resources
+	
+src/main/resources 는 리소스를 보관하는 곳이고, 또 클래스패스의 시작 경로이다. 따라서 다음 디렉토리에 리소스를 넣어두면 스프링 부트가 정적 리소스로 서비스를 제공한다.
+	
+**정적 리소스 경로**
+src/main/resources/static
+	
+다음 경로에 파일이 들어있으면
+src/main/resources/static/basic/hello-form.html
+	
+웹 브라우저에서 다음과 같이 실행하면 된다. 
+http://localhost:8080/basic/hello-form.html
+
+정적 리소스는 해당 파일을 변경 없이 그대로 서비스하는 것이다.
+	
+**뷰 템플릿**
+뷰 템플릿을 거쳐서 HTML이 생성되고, 뷰가 응답을 만들어서 전달한다.
+일반적으로 HTML을 동적으로 생성하는 용도로 사용하지만, 다른 것들도 가능하다.
+뷰 템플릿이 만들 수 있는 것이라면 뭐든지 가능하다. 스프링 부트는 기본 뷰 템플릿 경로를 제공한다.
+	
+**뷰 템플릿 경로**
+src/main/resources/templates
+	
+**뷰 템플릿 생성**
+src/main/resources/templates/response/hello.html
+	
+<img width="1182" alt="스크린샷 2023-05-10 오후 11 43 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/6f72f9ce-2f55-41bb-9d3c-8da1c2415428">
+
+**ResponseViewController - 뷰 템플릿을 호출하는 컨트롤러**
+	
+<img width="1257" alt="스크린샷 2023-05-10 오후 11 49 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/61c83eb7-062e-492f-86c8-be7186f8ff74">
+
+
+<img width="1211" alt="스크린샷 2023-05-10 오후 11 53 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/310b11aa-060b-4050-84d5-daa086a0676c">
+	
+**String을 반환하는 경우 - View or HTTP 메시지**
+@ResponseBody 가 없으면 response/hello 로 뷰 리졸버가 실행되어서 뷰를 찾고, 렌더링 한다. 
+@ResponseBody 가 있으면 뷰 리졸버를 실행하지 않고, HTTP 메시지 바디에 직접 response/hello 라는 문자가 입력된다.
+
+여기서는 뷰의 논리 이름인 response/hello 를 반환하면 다음 경로의 뷰 템플릿이 렌더링 되는 것을 확인할 수 있다.
+- 실행: templates/response/hello.html
+
+**Void를 반환하는 경우**
+- @Controller 를 사용하고, HttpServletResponse , OutputStream(Writer) 같은 HTTP 메시지
+바디를 처리하는 파라미터가 없으면 요청 URL을 참고해서 논리 뷰 이름으로 사용 
+	- 요청 URL: /response/hello
+	- 실행: templates/response/hello.html
+- **참고로 이 방식은 명시성이 너무 떨어지고 이렇게 딱 맞는 경우도 많이 없어서, 권장하지 않는다.**
+	
+	
+**HTTP 메시지**
+@ResponseBody , HttpEntity 를 사용하면, 뷰 템플릿을 사용하는 것이 아니라, HTTP 메시지 바디에 직접 응답 데이터를 출력할 수 있다.
+	
+
+	
+#### Thymeleaf 스프링 부트 설정
+
+- build.gradle
+	
+`implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'`
+	
+스프링 부트가 자동으로 ThymeleafViewResolver 와 필요한 스프링 빈들을 등록한다. 그리고 다음 설정도 사용한다. 이 설정은 기본 값 이기 때문에 변경이 필요할 때만 설정하면 된다.
+	
+> 참고
+	
+> 스프링 부트의 타임리프 관련 추가 설정은 다음 공식 사이트를 참고하자. (페이지 안에서 thymeleaf 검색) 
+	
+> https://docs.spring.io/spring-boot/docs/2.4.3/reference/html/appendix-application-properties.html#common-application-properties-templating
+	
+	
+
+### HTTP 응답 - HTTP API, 메시지 바디에 직접 입력
+	
+HTTP API를 제공하는 경우에는 HTML이 아니라 데이터를 전달해야 하므로, HTTP 메시지 바디에 JSON 같은 형식으로 데이터를 실어 보낸다.
+HTTP 요청에서 응답까지 대부분 다루었으므로 이번시간에는 정리를 해보자.
+	
+
+> 참고
+	
+> HTML이나 뷰 템플릿을 사용해도 HTTP 응답 메시지 바디에 HTML 데이터가 담겨서 전달된다. 여기서 설명하는 내용은 정적 리소스나 뷰 템플릿을 거치지 않고, 직접 HTTP 응답 메시지를 전달하는 경우를 말한다.
+
+	
+**ResponseBodyController**
+	
+<img width="1190" alt="스크린샷 2023-05-11 오전 12 08 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/7df08e0a-1538-41b9-b0b5-7f248373cbd9">
+
+<img width="1190" alt="스크린샷 2023-05-11 오전 12 09 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/c9723117-4546-4bc2-84e9-f07953502591">
+
+**responseBodyV1**
+서블릿을 직접 다룰 때 처럼
+HttpServletResponse 객체를 통해서 HTTP 메시지 바디에 직접 ok 응답 메시지를 전달한다.
+	
+response.getWriter().write("ok")
+	
+**responseBodyV2**
+ResponseEntity 엔티티는 HttpEntity 를 상속 받았는데, HttpEntity는 HTTP 메시지의 헤더, 바디 정보를 가지고 있다. ResponseEntity 는 여기에 더해서 HTTP 응답 코드를 설정할 수 있다.
+	
+HttpStatus.CREATED 로 변경하면 201 응답이 나가는 것을 확인할 수 있다.
+	
+**responseBodyV3**
+@ResponseBody 를 사용하면 view를 사용하지 않고, HTTP 메시지 컨버터를 통해서 HTTP 메시지를 직접 입력할 수 있다. ResponseEntity 도 동일한 방식으로 동작한다.
+	
+**responseBodyJsonV1**
+ResponseEntity 를 반환한다. HTTP 메시지 컨버터를 통해서 JSON 형식으로 변환되어서 반환된다.
+
+**responseBodyJsonV2**
+ResponseEntity 는 HTTP 응답 코드를 설정할 수 있는데, @ResponseBody 를 사용하면 이런 것을 설정하기 까다롭다.
+**@ResponseStatus(HttpStatus.OK) 애노테이션을 사용하면 응답 코드도 설정할 수 있다.**
+	
+물론 애노테이션이기 때문에 응답 코드를 동적으로 변경할 수는 없다. 프로그램 조건에 따라서 **동적으로 변경하려면 ResponseEntity 를 사용**하면 된다.
+	
+	
+**@RestController**
+@Controller 대신에 @RestController 애노테이션을 사용하면, 해당 컨트롤러에 모두 @ResponseBody 가 적용되는 효과가 있다. 따라서 뷰 템플릿을 사용하는 것이 아니라, HTTP 메시지 바디에 직접 데이터를 입력한다. 이름 그대로 Rest API(HTTP API)를 만들 때 사용하는 컨트롤러이다.
+	
+참고로 @ResponseBody 는 클래스 레벨에 두면 전체 메서드에 적용되는데, @RestController 에노테이션 안에 @ResponseBody 가 적용되어 있다.
+
+
 	
