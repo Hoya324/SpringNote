@@ -2802,9 +2802,79 @@ age=abc 처럼 숫자가 들어가야 할 곳에 문자를 넣으면 BindExcepti
 
 > argument resolver는 뒤에서 학습한다.
 
+### HTTP 요청 메시지 - 단순 텍스트 
+
+서블릿에서 학습한 내용을 떠올려보자.
+	
+HTTP message body에 데이터를 직접 담아서 요청 
+	- HTTP API에서 주로 사용, JSON, XML, TEXT 
+	- 데이터 형식은 주로 JSON 사용	
+	- POST, PUT, PATCH
+	
+	
+요청 파라미터와 다르게, HTTP 메시지 바디를 통해 데이터가 직접 넘어오는 경우는 @RequestParam , @ModelAttribute 를 사용할 수 없다. (물론 HTML Form 형식으로 전달되는 경우는 요청 파라미터로 인정된다.)
+
+- 먼저 가장 단순한 텍스트 메시지를 HTTP 메시지 바디에 담아서 전송하고, 읽어보자. 
+- HTTP 메시지 바디의 데이터를 InputStream 을 사용해서 직접 읽을 수 있다.
+
+**RequestBodyStringController**
+	
+<img width="997" alt="스크린샷 2023-05-10 오후 9 30 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/a637f992-af46-4d86-ae6b-3399f72c9177">
+
+- postMan
+	
+<img width="1204" alt="스크린샷 2023-05-10 오후 9 34 57" src="https://github.com/Hoya324/SpringNote/assets/96857599/09246d81-5cd9-47f0-8984-7d048c5cfe79">
+
+- 결과
+	
+<img width="1286" alt="스크린샷 2023-05-10 오후 9 35 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/3d898fa0-d72b-4c64-aa42-fae039b7ca54">
+
+**Input, Output 스트림, Reader - requestBodyStringV2**
+	
+<img width="1211" alt="스크린샷 2023-05-10 오후 9 38 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/e6e088ba-205f-4378-a86a-54a2e7c1af5b">
+	
+- postMan
+	
+<img width="1204" alt="스크린샷 2023-05-10 오후 9 39 50" src="https://github.com/Hoya324/SpringNote/assets/96857599/b3dc3e26-a0b0-40a5-9ab6-1a17d72f88f7">
+
+- 결과
+	
+<img width="1211" alt="스크린샷 2023-05-10 오후 9 40 17" src="https://github.com/Hoya324/SpringNote/assets/96857599/a4d8c90a-3fc8-451d-bd30-1f0cf755e0bd">
 
 
 
+	
+**스프링 MVC는 다음 파라미터를 지원한다.**
+- InputStream(Reader): **HTTP 요청 메시지** 바디의 내용을 직접 조회 
+- OutputStream(Writer):** HTTP 응답 메시지**의 바디에 직접 결과 출력
+	
+	
+**HttpEntity - requestBodyStringV3**
+	
+<img width="1284" alt="스크린샷 2023-05-10 오후 9 42 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/8969741a-96f9-4618-b5b6-789e8e6676ae">
 
 
 
+**스프링 MVC는 다음 파라미터를 지원한다.**
+- **HttpEntity**: HTTP header, body 정보를 편리하게 조회
+	- 메시지 바디 정보를 직접 조회
+	- **요청 파라미터를 조회하는 기능과 관계 없음 @RequestParam X, @ModelAttribute X **
+		- 요청파라미터는 GET에 queryParameter 오는 것,
+- **HttpEntity는** **응답에도** 사용 가능
+	- 메시지 바디 정보 직접 반환 
+	- 헤더 정보 포함 가능
+	- view 조회X
+  
+**HttpEntity 를 상속받은 다음 객체들도 같은 기능을 제공한다. **
+- **RequestEntity**
+	- HttpMethod, url 정보가 추가, 요청에서 사용 
+- **ResponseEntity**
+	- HTTP 상태 코드 설정 가능, 응답에서 사용
+	- 'return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED)'
+	
+
+> 참고
+
+> 스프링MVC 내부에서 HTTP 메시지 바디를 읽어서 문자나 객체로 변환해서 전달해주는데, 이때 HTTP
+메시지 컨버터( HttpMessageConverter )라는 기능을 사용한다. 이것은 조금 뒤에 HTTP 메시지 컨버터에서 자세히 설명한다.
+	
