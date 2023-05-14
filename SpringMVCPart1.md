@@ -3437,16 +3437,222 @@ public WebMvcConfigurer webMvcConfigurer() {
 > 웹 클라이언트 기술을 사용하면, 웹 프론트엔드 개발자가 HTML을 동적으로 만드는 역할과 웹 화면의 흐름을 담당한다. 이 경우 백엔드 개발자는 HTML 뷰 템플릿을 직접 만지는 대신에, HTTP API를 통해 웹 클라이언트가 필요로 하는 데이터와 기능을 제공하면 된다.
 	
 	
+
+### 상품 도메인 개발
+
+**Item - 상품 객체**
+	
+<img width="1160" alt="스크린샷 2023-05-14 오후 2 44 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/a8c466af-f547-4f55-8285-04c49ff3d07c">
+
+
+- @Data를 써도 되지만(영한님은 그렇게 함) 이는 @Data 내부 구성요소를 잘 파악한 후에 쓰도록하자.
+
+<img width="1160" alt="스크린샷 2023-05-14 오후 2 45 49" src="https://github.com/Hoya324/SpringNote/assets/96857599/70a48e8e-5caa-4abf-af70-49854779392b">
+
+	
+**ItemRepository - 상품 저장소**
+	
+<img width="1370" alt="스크린샷 2023-05-14 오후 3 08 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/5303b53d-b324-4b1a-8592-538a7b3b4263">
+
+(ConcurrentHashMap 정리)[https://velog.io/@alsgus92/ConcurrentHashMap의-Thread-safe-원리}
+	
+
+**update에서 ItemParamDto를 따로 만들어 사용한 이유**
+	
+- Item 객체 내부에는 Id의 getter setter가 들어있는데, 이는 사용하지 않는다.
+- 지금 프로젝트는 작아서 괜찮지만, 큰 프로젝트의 경우 헷갈리기 쉽기 때문에 명확하게 새로운 객체를 만들어 사용하는 것이 좋다.
+	
+**테스트용 store 클리어 메서드**
+	
+<img width="240" alt="스크린샷 2023-05-14 오후 3 10 39" src="https://github.com/Hoya324/SpringNote/assets/96857599/886395a2-5a73-4c2f-bd79-e68b73d706ba">
 	
 	
+**ItemRepositoryTest - 상품 저장소 테스트**
+	
+<img width="1327" alt="스크린샷 2023-05-14 오후 3 26 27" src="https://github.com/Hoya324/SpringNote/assets/96857599/4149d026-92d4-42d8-a50f-141c3ccba068">
+
+<img width="1327" alt="스크린샷 2023-05-14 오후 3 26 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/0c49e3ac-d84b-4300-a6f9-301bac67d329">
+	
+<img width="1327" alt="스크린샷 2023-05-14 오후 3 27 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/62381325-7ad4-4d3c-87cd-3e29a40270ff">
+
+### 상품 서비스 HTML
+	
+핵심 비즈니스 로직을 개발하는 동안, 웹 퍼블리셔는 HTML 마크업을 완료했다.
+다음 파일들을 경로에 넣고 잘 동작하는지 확인해보자.
+	
+**부트스트랩**
+	
+참고로 HTML을 편리하게 개발하기 위해 부트스트랩 사용했다. 
+먼저 필요한 부트스트랩 파일을 설치하자
+	
+- 부트스트랩 공식 사이트: https://getbootstrap.com 
+- 부트스트랩을 다운로드 받고 압축을 풀자.
+	- 이동: https://getbootstrap.com/docs/5.0/getting-started/download/ 		- Compiled CSS and JS 항목을 다운로드하자.
+	- 압축을 출고 bootstrap.min.css 를 복사해서 다음 폴더에 추가하자
+    - resources/static/css/bootstrap.min.css
+	
+> 참고
+> 부트스트랩(Bootstrap)은 웹사이트를 쉽게 만들 수 있게 도와주는 HTML, CSS, JS 프레임워크이다. 하나의 CSS로 휴대폰, 태블릿, 데스크탑까지 다양한 기기에서 작동한다. 다양한 기능을 제공하여 사용자가 쉽게 웹사이트를 제작, 유지, 보수할 수 있도록 도와준다. - 출처: 위키백과
+	
+**HTML, css 파일**
+	
+`/resources/static/css/bootstrap.min.css` -> 부트스트랩 다운로드 
+`/resources/static/html/items.html` -> 아래 참조 
+`/resources/static/html/item.html` 
+`/resources/static/html/addForm.html`
+`/resources/static/html/editForm.html`
+	
+참고로 /resources/static 에 넣어두었기 때문에 스프링 부트가 정적 리소스를 제공한다.
+
+- http://localhost:8080/html/items.html
+그런데 정적 리소스여서 **해당 파일을 탐색기를 통해 직접 열어**도 동작하는 것을 확인할 수 있다.
+	
+> 참고
+	
+> 이렇게 정적 리소스가 공개되는 /resources/static 폴더에 HTML을 넣어두면, 실제 서비스에서도
+공개된다. 서비스를 운영한다면 지금처럼 공개할 필요없는 HTML을 두는 것은 주의하자.
+	
+**정적 html 파일은 따로 확인**
 	
 	
+
+### 상품 목록 - 타임리프
+
+본격적으로 컨트롤러와 뷰 템플릿을 개발해보자.
+
+**BasicItemController**
+	
+<img width="1132" alt="스크린샷 2023-05-14 오후 4 22 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/3af19302-e25b-4fec-a579-15afcd94a0e7">
+
+
+컨트롤러 로직은 itemRepository에서 모든 상품을 조회한 다음에 모델에 담는다. 그리고 뷰 템플릿을 호출한다.
+
+**`@RequiredArgsConstructor`**
+	- `final` 이 붙은 멤버변수만 사용해서 생성자를 자동으로 만들어준다.
+```java
+public BasicItemController(ItemRepository itemRepository) {
+    this.itemRepository = itemRepository;
+}
+```
+
+- 이렇게 생성자가 딱 1개만 있으면 스프링이 해당 생성자에 @Autowired 로 의존관계를 주입해준다. 
+- 따라서 **final 키워드를 빼면 안된다**!, 그러면 ItemRepository 의존관계 주입이 안된다.
+	
+**테스트용 데이터 추가**
+
+- 테스트용 데이터가 없으면 회원 목록 기능이 정상 동작하는지 확인하기 어렵다. 
+- @PostConstruct : 해당 빈의 의존관계가 모두 주입되고 나면 초기화 용도로 호출된다.
+- 여기서는 간단히 테스트용 테이터를 넣기 위해서 사용했다.
+	
+
+**items.html 정적 HTML을 뷰 템플릿(templates) 영역으로 복사하고 다음과 같이 수정하자**
+- `/resources/static/items.html` -> **복사** `/resources/templates/basic/items.html`
+	
+`/resources/templates/basic/items.html`
+
+**css 경로 변경**
+```html
+<link th:href="@{/css/bootstrap.min.css}">
+		href="../css/bootstrap.min.css" rel="stylesheet">
+```
+
+**상품등록 버튼 클릭시 이동 경로 수정**
+	
+<img width="871" alt="스크린샷 2023-05-14 오후 4 32 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/05191575-0223-4c50-b0ef-70bcad856dcf">
+	
+**변수 받아서 루프로 상품 표시**
+	
+<img width="1286" alt="스크린샷 2023-05-14 오후 4 36 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/f20e879f-cc9d-40b3-a64f-c1901fcb4b5b">
+	
+**item id에 따라 링크 생성해서 등록**
+	
+<img width="1317" alt="스크린샷 2023-05-14 오후 4 55 36" src="https://github.com/Hoya324/SpringNote/assets/96857599/9dbf927f-0b5e-4be2-af4b-e7d5ca9e0fd0">
+
+<img width="1046" alt="스크린샷 2023-05-14 오후 4 40 53" src="https://github.com/Hoya324/SpringNote/assets/96857599/a369ef84-ab34-47e2-90c3-d181caf28bf3">
 	
 	
+### 타임리프 간단히 알아보기
+	
+**타임리프 사용 선언**
+	
+`<html xmlns:th="http://www.thymeleaf.org">`
+	
+**속성 변경 - th:href**
+`th:href="@{/css/bootstrap.min.css}"`
+	
+- `href="value1"` 을 `th:href="value2"` 의 값으로 변경한다.
+- 타임리프 뷰 템플릿을 거치게 되면 원래 값을 `th:xxx` 값으로 변경한다. 만약 값이 없다면 새로 생성한다. 
+- HTML을 그대로 볼 때는 href 속성이 사용되고, 뷰 템플릿을 거치면 `th:href` 의 값이 href 로 대체되면서 동적으로 변경할 수 있다.
+- 대부분의 HTML 속성을 `th:xxx` 로 변경할 수 있다.
 	
 	
+**타임리프 핵심**
+- 핵심은 `th:xxx` 가 붙은 부분은 서버사이드에서 렌더링 되고, 기존 것을 대체한다. `th:xxx` 이 없으면 기존 html의 `xxx `속성이 그대로 사용된다.
+- HTML을 파일로 직접 열었을 때, th:xxx 가 있어도 웹 브라우저는 th: 속성을 알지 못하므로 무시한다. 
+- 따라서 HTML을 파일 보기를 유지하면서 템플릿 기능도 할 수 있다.
+	
+**URL 링크 표현식 - @{...}, **
+`th:href="@{/css/bootstrap.min.css}"`
+- `@{...}` : 타임리프는 URL 링크를 사용하는 경우 `@{...}` 를 사용한다. 이것을 URL 링크 표현식이라 한다. URL 링크 표현식을 사용하면 서블릿 컨텍스트를 자동으로 포함한다.
 	
 	
+#### 상품 등록 폼으로 이동
+	
+**속성 변경 - th:onclick**
+`onclick="location.href='addForm.html'"`
+`th:onclick="|location.href='@{/basic/items/add}'|"`
+	
+여기에는 다음에 설명하는 리터럴 대체 문법이 사용되었다. 자세히 알아보자.
+
+**리터럴 대체 - |...|**
+
+`|...|` :이렇게 사용한다.
+- 타임리프에서 문자와 표현식 등은 분리되어 있기 때문에 더해서 사용해야 한다.
+	- `<span th:text="'Welcome to our application, ' + ${user.name} + '!'">`
+- 다음과 같이 리터럴 대체 문법을 사용하면, 더하기 없이 편리하게 사용할 수 있다. 
+	- `<span th:text="|Welcome to our application, ${user.name}!|">`
+	
+- 결과를 다음과 같이 만들어야 하는데
+     `location.href='/basic/items/add'`
+- 그냥 사용하면 문자와 표현식을 각각 따로 더해서 사용해야 하므로 다음과 같이 복잡해진다. 	
+	- `th:onclick="'location.href=' + '\'' + @{/basic/items/add} + '\''"`
+- 리터럴 대체 문법을 사용하면 다음과 같이 편리하게 사용할 수 있다. 	  
+	- `th:onclick="|location.href='@{/basic/items/add}'|"`
 	
 	
+**반복 출력 - th:each**
 	
+- <tr th:each="item : ${items}">
+- 반복은 th:each 를 사용한다. 이렇게 하면 모델에 포함된 items 컬렉션 데이터가 item 변수에 하나씩 포함되고, 반복문 안에서 item 변수를 사용할 수 있다.
+- 컬렉션의 수 만큼 <tr>..</tr> 이 하위 테그를 포함해서 생성된다.
+
+**변수 표현식 - ${...}**
+	
+- `<td th:text="${item.price}">10000</td>`
+- 모델에 포함된 값이나, 타임리프 변수로 선언한 값을 조회할 수 있다.
+- 프로퍼티 접근법을 사용한다. ( item.getPrice() )
+	
+**내용 변경 - th:text**
+
+- `<td th:text="${item.price}">10000</td>`
+- 내용의 값을 `th:text` 의 값으로 변경한다.
+- 여기서는 10000을 ${item.price} 의 값으로 변경한다.
+	
+**URL 링크 표현식2 - @{...},**
+- `th:href="@{/basic/items/{itemId}(itemId=${item.id})}"`
+- 상품 ID를 선택하는 링크를 확인해보자.
+- URL 링크 표현식을 사용하면 경로를 템플릿처럼 편리하게 사용할 수 있다.
+- 경로 변수( {itemId} ) 뿐만 아니라 쿼리 파라미터도 생성한다.
+- 예) `th:href="@{/basic/items/{itemId}(itemId=${item.id}, query='test')}"`
+	- 생성 링크: `http://localhost:8080/basic/items/1?query=test`
+
+**URL 링크 간단히**
+- `th:href="@{|/basic/items/${item.id}|}"`
+- 상품 이름을 선택하는 링크를 확인해보자.
+- 리터럴 대체 문법을 활용해서 간단히 사용할 수도 있다.
+	
+> 참고
+	
+> 타임리프는 순수 HTML 파일을 웹 브라우저에서 열어도 내용을 확인할 수 있고, 서버를 통해 뷰 템플릿을 거치면 동적으로 변경된 결과를 확인할 수 있다. JSP를 생각해보면, JSP 파일은 웹 브라우저에서 그냥 열면 JSP 소스코드와 HTML이 뒤죽박죽 되어서 정상적인 확인이 불가능하다. 오직 서버를 통해서 JSP를 열어야 한다.
+	
+> 이렇게 순수 HTML을 그대로 유지하면서 뷰 템플릿도 사용할 수 있는 타임리프의 특징을 네츄럴 템플릿 (natural templates)이라 한다.
