@@ -3355,3 +3355,40 @@ public WebMvcConfigurer webMvcConfigurer() {
 ### 정리
 
 
+## 스프링 MVC- 웹 페이지 만들기
+	
+### 프로젝트 생성
+	
+- 프로젝트 선택
+	- Project: Gradle Project 
+	- Language: Java 
+	- Spring Boot: 2.4.x
+- Project Metadata 
+	- Group: hello
+	- Artifact: item-service
+	- Name: item-service
+	- Package name: hello.itemservice 
+	- Packaging: Jar (주의!)
+	- Java: 11
+- Dependencies: Spring Web, Thymeleaf, Lombok
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
