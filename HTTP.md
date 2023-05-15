@@ -456,28 +456,36 @@ HTTP 메시지에 모든 것을 전송
 #### 시작 라인
 
 1. 요청 메시지
+
 <img width="660" alt="스크린샷 2023-01-25 오후 3 07 23" src="https://user-images.githubusercontent.com/96857599/214492620-ba9d371a-5ed0-4c70-9957-e46a9ba2672a.png">
 
 1-1. 요청 메시지 - HTTP 메서드
+
 <img width="666" alt="스크린샷 2023-01-25 오후 3 09 53" src="https://user-images.githubusercontent.com/96857599/214493043-8df61ffb-19d3-4736-9b2e-0e700156b0e3.png">
 
 1-2. 요청 메시지 - 요청 대상
+
 <img width="680" alt="스크린샷 2023-01-25 오후 3 11 13" src="https://user-images.githubusercontent.com/96857599/214493222-54c83965-4bd3-4c1f-a0fd-ab56c4a823ec.png">
 
 1-3. 요청 메시지 - HTTP 버전
+
 <img width="665" alt="스크린샷 2023-01-25 오후 3 12 33" src="https://user-images.githubusercontent.com/96857599/214493386-c17f3425-63ef-4f47-a6d7-4a85697a7315.png">
 
 2. 응답 메시지
+
 <img width="653" alt="스크린샷 2023-01-25 오후 3 13 06" src="https://user-images.githubusercontent.com/96857599/214493476-20c085db-97b1-4d1b-b3ff-2c801825e796.png">
 
 
 #### HTTP 헤더
+
 <img width="658" alt="스크린샷 2023-01-25 오후 3 15 27" src="https://user-images.githubusercontent.com/96857599/214493751-3fc9b71c-af45-4931-9653-e88e56c7af15.png">
 
 1. 용도
+
 <img width="677" alt="스크린샷 2023-01-25 오후 3 16 46" src="https://user-images.githubusercontent.com/96857599/214493932-0eb90cce-9eff-405a-a6aa-15113b5975a0.png">
 
 #### HTTP 메시지 바디
+
 <img width="671" alt="스크린샷 2023-01-25 오후 3 18 16" src="https://user-images.githubusercontent.com/96857599/214494137-e3840e8b-edee-4c9c-9c61-49b3e76bc612.png">
 
 > 단순함 확장 가능
