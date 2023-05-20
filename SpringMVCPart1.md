@@ -3558,7 +3558,7 @@ public BasicItemController(ItemRepository itemRepository) {
 
 **상품등록 버튼 클릭시 이동 경로 수정**
 	
-<img width="871" alt="스크린샷 2023-05-14 오후 4 32 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/05191575-0223-4c50-b0ef-70bcad856dcf">
+<img width="1258" alt="스크린샷 2023-05-20 오후 5 05 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/45eff69b-df99-4517-b8fa-03a0247cb1d4">
 	
 **변수 받아서 루프로 상품 표시**
 	
@@ -3665,6 +3665,16 @@ public BasicItemController(ItemRepository itemRepository) {
 
 **BasicItemController에 추가**
 	
+```java
+@GetMapping("/{itemId}")
+public String item(@PathVariable Long itemId, Model model) {
+	Item item = itemRepository.findById(itemId);
+	model.addAttribute("item", item);
+    return "basic/item";
+}
+```
+	
+	
 <img width="519" alt="스크린샷 2023-05-20 오후 3 59 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/7ff4cf24-1446-413d-ad34-7ae6aefadd7b">
 
 PathVariable 로 넘어온 상품ID로 상품을 조회하고, 모델에 담아둔다. 그리고 뷰 템플릿을 호출한다.
@@ -3676,9 +3686,282 @@ PathVariable 로 넘어온 상품ID로 상품을 조회하고, 모델에 담아�
 
 `/resources/static/item.html` -> 복사 -> `/resources/templates/basic/item.html`
 	
+`/resources/templates/basic/item.html`
+	
+<img width="1355" alt="스크린샷 2023-05-20 오후 4 13 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/c660faa6-0d35-4dcc-93a0-84c9a901dba8">
+	
+<img width="1258" alt="스크린샷 2023-05-20 오후 5 06 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/9f99d6cf-d253-46e1-a255-607fb3e3f157">
+
+	
+**속성 변경 - th:value** 
+	
+`th:value="${item.id}"`
+ 
+- 모델에 있는 item 정보를 획득하고 프로퍼티 접근법으로 출력한다. ( item.getId() ) 
+- value 속성을 th:value 속성으로 변경한다.
+	
+**상품수정 링크**
+- th:onclick="|location.href='@{/basic/items/{itemId}/edit(itemId=${item.id})}'|"
+	
+**목록으로 링크**
+- th:onclick="|location.href='@{/basic/items}'|"
+	
+	
+	
+### 상품 등록 폼
+	
+**BasicItemController에 추가**
+
+```java
+@GetMapping("/add")
+public String addForm() {
+	return "basic/addForm";
+}
+```
+
+상품 등록 폼은 단순히 뷰 템플릿만 호출한다.
+	
+**상품 등록 폼 뷰**
+
+정적 HTML을 뷰 템플릿(templates) 영역으로 복사하고 다음과 같이 수정하자. 
+`/resources/static/addForm.html` -> 복사 `/resources/templates/basic/addForm.html`
+	
+`/resources/templates/basic/addForm.html`
+	
+<img width="953" alt="스크린샷 2023-05-20 오후 4 47 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/6d304ab5-59ac-40fe-a4ed-49604b6c1701">
+
+**속성 변경 - th:action** 
+- th:action
+- HTML form에서 action 에 값이 없으면 현재 URL에 데이터를 전송한다.
+- 상품 등록 폼의 URL과 실제 상품 등록을 처리하는 URL을 똑같이 맞추고 HTTP 메서드로 두 기능을 구분한다.
+	- 상품 등록 폼: GET /basic/items/add
+	- 상품 등록 처리: POST /basic/items/add
+- 이렇게 하면 하나의 URL로 등록 폼과, 등록 처리를 깔끔하게 처리할 수 있다.
+	
+	
+**취소**
+- 취소시 상품 목록으로 이동한다. 
+- th:onclick="|location.href='@{/basic/items}'|"
+	
+	
+### 상품 등록 처리 - @ModelAttribute
+
+이제 상품 등록 폼에서 전달된 데이터로 실제 상품을 등록 처리해보자. 
+상품 등록 폼은 다음 방식으로 서버에 데이터를 전달한다.
+	
+- **POST - HTML Form**
+	- content-type: application/x-www-form-urlencoded
+	- 메시지 바디에 쿼리 파리미터 형식으로 전달 itemName=itemA&price=10000&quantity=10 
+	- 예) 회원 가입, 상품 주문, HTML Form 사용
+	
+요청 파라미터 형식을 처리해야 하므로 @RequestParam 을 사용하자 
+
+**상품 등록 처리 - @RequestParam**
+	
+**addItemV1 - BasicItemController에 추가**
+<img width="1258" alt="스크린샷 2023-05-20 오후 5 09 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/d8c0ab52-a82e-4a7a-b270-38fb1749f565">
+
+- 먼저 @RequestParam String itemName : itemName 요청 파라미터 데이터를 해당 변수에 받는다.
+- Item 객체를 생성하고 itemRepository 를 통해서 저장한다.
+- 저장된 item 을 모델에 담아서 뷰에 전달한다.
+	
+**중요**: 여기서는 상품 상세에서 사용한 item.html 뷰 템플릿을 그대로 재활용한다. 
+	
+실행해서 상품이 잘 저장되는지 확인하자.
+	
+	
+**상품 등록 처리 - @ModelAttribute**
+
+@RequestParam 으로 변수를 하나하나 받아서 Item 을 생성하는 과정은 불편했다. 
+이번에는 @ModelAttribute 를 사용해서 한번에 처리해보자.
+
+**addItemV2 - 상품 등록 처리 - ModelAttribute**
+	
+<img width="1414" alt="스크린샷 2023-05-20 오후 5 19 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/d64b4457-90e8-4276-8099-15748e0fc69e">
+	
+**@ModelAttribute - 요청 파라미터 처리**
+@ModelAttribute 는 Item 객체를 생성하고, 요청 파라미터의 값을 프로퍼티 접근법(setXxx)으로 입력해준다.
+
+**@ModelAttribute - Model 추가**
+@ModelAttribute 는 중요한 한가지 기능이 더 있는데, 바로 모델(Model)에 @ModelAttribute 로 지정한 객체를 자동으로 넣어준다. 
+지금 코드를 보면 model.addAttribute("item", item) 가 주석처리 되어 있어도 잘 동작하는 것을 확인할 수 있다.
+
+모델에 데이터를 담을 때는 이름이 필요하다. 이름은 @ModelAttribute 에 지정한 name(value) 속성을 사용한다. 만약 다음과 같이 @ModelAttribute 의 이름을 다르게 지정하면 다른 이름으로 모델에 포함된다.
+
+`@ModelAttribute("hello") Item item` -> 이름을 `hello` 로 지정 
+`model.addAttribute("hello", item);` 모델에 `hello` 이름으로 저장
 	
 
+**주의**
+실행전에 이전 버전인 addItemV1 에 @PostMapping("/add") 를 꼭 주석처리 해주어야 한다. 그렇지 않으면 중복 매핑으로 오류가 발생한다.
+	
+
+**addItemV3 - 상품 등록 처리 - ModelAttribute 이름 생략**
+
+<img width="1414" alt="스크린샷 2023-05-20 오후 5 21 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/29add5df-475e-4c87-82be-b6e361d2e808">
+	
+@ModelAttribute 의 이름을 생략할 수 있다.
+
+**주의**
+@ModelAttribute 의 이름을 생략하면 모델에 저장될 때 클래스명을 사용한다. 이때 클래스의 첫글자만 소문자로 변경해서 등록한다.
+	
+- 예) @ModelAttribute 클래스명 모델에 자동 추가되는 이름
+	- Item item
+	- HelloWorld helloWorld
 
 	
+**addItemV4 - 상품 등록 처리 - ModelAttribute 전체 생략**
 	
+<img width="1414" alt="스크린샷 2023-05-20 오후 5 23 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/d7a1f060-dbda-4f21-8fa8-abb7a0efb254">
+
+-  @ModelAttribute 자체도 생략가능하다. 대상 객체는 모델에 자동 등록된다. 나머지 사항은 기존과 동일하다.
+	
+### 상품 수정
+	
+**상품 수정 폼 컨트롤러 **
+	
+**상품 수정 폼 컨트롤러 **
+**BasicItemController에 추가**
+
+<img width="1209" alt="스크린샷 2023-05-20 오후 7 27 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/0293d352-3633-466d-b51c-0ddc3ce2e46b">
+
+수정에 필요한 정보를 조회하고, 수정용 폼 뷰를 호출한다.
+	
+**상품 수정 폼 뷰**
+
+정적 HTML을 뷰 템플릿(templates) 영역으로 복사하고 다음과 같이 수정하자. `/resources/static/editForm.html` -> 복사 `/resources/templates/basic/editForm.html`
+	
+`/resources/templates/basic/editForm.html`
+<img width="1209" alt="스크린샷 2023-05-20 오후 7 29 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/ac8a6b65-f321-4701-a600-7a53106ca172">
+
+상품 수정 폼은 상품 등록과 유사하고, 특별한 내용이 없다.
+	
+**상품 수정 개발**
+	
+<img width="1094" alt="스크린샷 2023-05-20 오후 7 35 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/ae2a25cb-fd50-4462-b6ec-011664749d95">
+	
+```java
+@PostMapping("/{itemId}/edit")
+public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+	itemRepository.update(itemId, item);
+	return "redirect:/basic/items/{itemId}";
+}
+```
+상품 수정은 상품 등록과 전체 프로세스가 유사하다. 
+- GET /items/{itemId}/edit	: 상품수정폼 
+- POST /items/{itemId}/edit : 상품 수정 처리
+
+**리다이렉트**
+상품 수정은 마지막에 뷰 템플릿을 호출하는 대신에 상품 상세 화면으로 이동하도록 리다이렉트를 호출한다.
+- 스프링은 redirect:/... 으로 편리하게 리다이렉트를 지원한다.
+- redirect:/basic/items/{itemId}
+	- 컨트롤러에 매핑된 @PathVariable 의 값은 redirect 에도 사용 할 수 있다.
+	- redirect:/basic/items/{itemId} {itemId} 는 @PathVariable Long itemId 의 값을 그대로 사용한다.
+	
+> 참고
+	
+> HTML Form 전송은 PUT, PATCH를 지원하지 않는다. GET, POST만 사용할 수 있다.
+	
+> PUT, PATCH는 HTTP API 전송시에 사용
+	
+> 스프링에서 HTTP POST로 Form 요청할 때 히든 필드를 통해서 PUT, PATCH 매핑을 사용하는 방법이 있지만, HTTP 요청상 POST 요청이다.
+
+
+### PRG Post/Redirect/Get
+	
+사실 지금까지 진행한 상품 등록 처리 컨트롤러는 심각한 문제가 있다. (addItemV1 ~ addItemV4)
+상품 등록을 완료하고 웹 브라우저의 새로고침 버튼을 클릭해보자.
+상품이 계속해서 중복 등록되는 것을 확인할 수 있다.
+
+<img width="547" alt="스크린샷 2023-05-20 오후 7 38 39" src="https://github.com/Hoya324/SpringNote/assets/96857599/b1bc4db9-e436-4a48-a8ac-3fd6916f2cb8">
+
+그 이유는 다음 그림을 통해서 확인할 수 있다. 
+	
+**POST 등록 후 새로 고침**	
+
+<img width="699" alt="스크린샷 2023-05-20 오후 7 39 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/e3a8afb6-cb89-47c7-a4d7-4a1bb581b9e3">
+
+웹 브라우저의 새로 고침은 마지막에 서버에 전송한 데이터를 다시 전송한다.
+상품 등록 폼에서 데이터를 입력하고 저장을 선택하면 POST /add + 상품 데이터를 서버로 전송한다.
+이 상태에서 새로 고침을 또 선택하면 마지막에 전송한 POST /add + 상품 데이터를 서버로 다시 전송하게 된다.
+그래서 내용은 같고, ID만 다른 상품 데이터가 계속 쌓이게 된다.
+	
+이 문제를 어떻게 해결할 수 있을까? 다음 그림을 보자. 
+	
+**POST, Redirect GET**
+	
+<img width="698" alt="스크린샷 2023-05-20 오후 7 44 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/ee8a4bd9-de66-42d1-aece-13f06e2d2768">
+	
+	
+웹 브라우저의 새로 고침은 마지막에 서버에 전송한 데이터를 다시 전송한다.
+새로 고침 문제를 해결하려면 상품 저장 후에 뷰 템플릿으로 이동하는 것이 아니라, 상품 상세 화면으로 리다이렉트를 호출해주면 된다.
+	
+웹 브라우저는 리다이렉트의 영향으로 상품 저장 후에 실제 상품 상세 화면으로 다시 이동한다. 따라서 마지막에 호출한 내용이 상품 상세 화면인 GET /items/{id} 가 되는 것이다.
+이후 새로고침을 해도 상품 상세 화면으로 이동하게 되므로 새로 고침 문제를 해결할 수 있다.
+	
+**BasicItemController에 추가**
+```java
+/**
+* PRG - Post/Redirect/Get
+*/
+@PostMapping("/add")
+public String addItemV5(Item item) {
+	itemRepository.save(item);
+	return "redirect:/basic/items/" + item.getId();
+}
+```
+	
+	
+상품 등록 처리 이후에 뷰 템플릿이 아니라 상품 상세 화면으로 리다이렉트 하도록 코드를 작성해보자. 이런 문제 해결 방식을 PRG Post/Redirect/Get 라 한다.
+	
+**주의**
+
+> "redirect:/basic/items/" + item.getId() redirect에서 + item.getId() 처럼 URL에 변수를 더해서 사용하는 것은 URL 인코딩이 안되기 때문에 위험하다. 다음에 설명하는 RedirectAttributes 를 사용하자.
+	
+
+### RedirectAttributes
+상품을 저장하고 상품 상세 화면으로 리다이렉트 한 것 까지는 좋았다. 그런데 고객 입장에서 저장이 잘 된 것인지 안 된 것인지 확신이 들지 않는다. 그래서 저장이 잘 되었으면 상품 상세 화면에 "저장되었습니다"라는 메시지를 보여달라는 요구사항이 왔다. 간단하게 해결해보자.
+
+**BasicItemController에 추가**
+
+```java
+ /**
+ * RedirectAttributes
+ */
+@PostMapping("/add")
+public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+	Item savedItem = itemRepository.save(item);
+	redirectAttributes.addAttribute("itemId", savedItem.getId());
+	redirectAttributes.addAttribute("status", true);
+	return "redirect:/basic/items/{itemId}";
+}
+```
+
+	
+리다이렉트 할 때 간단히 status=true 를 추가해보자.
+<img width="1359" alt="스크린샷 2023-05-20 오후 8 02 55" src="https://github.com/Hoya324/SpringNote/assets/96857599/7f6e64d3-df34-416f-812b-a5a9988579db">
+	
+그리고 뷰 템플릿에서 이 값이 있으면, 저장되었습니다. 라는 메시지를 출력해보자.
+<img width="477" alt="스크린샷 2023-05-20 오후 8 05 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/bcb4d0a9-0d18-4b69-8bb0-ff593db5d516">
+
+실행해보면 다음과 같은 리다이렉트 결과가 나온다.
+http://localhost:8080/basic/items/3?status=true
+
+**RedirectAttributes**
+RedirectAttributes 를 사용하면 URL 인코딩도 해주고, pathVarible , 쿼리 파라미터까지 처리해준다.
+- redirect:/basic/items/{itemId} 
+	- pathVariable 바인딩: {itemId}
+	- 나머지는 쿼리 파라미터로 처리: ?status=true
+	
+	
+**뷰 템플릿 메시지 추가**
+	
+`resources/templates/basic/item.html`
+<img width="1168" alt="스크린샷 2023-05-20 오후 8 06 11" src="https://github.com/Hoya324/SpringNote/assets/96857599/4f511dc2-b889-4c15-a6c2-85e255d13143">
+	
+- th:if : 해당 조건이 참이면 실행
+- ${param.status} : 타임리프에서 쿼리 파라미터를 편리하게 조회하는 기능
+	- 원래는 컨트롤러에서 모델에 직접 담고 값을 꺼내야 한다. 그런데 쿼리 파라미터는 자주 사용해서 타임리프에서 직접 지원한다.
+	
+뷰 템플릿에 메시지를 추가하고 실행해보면 "저장 완료!" 라는 메시지가 나오는 것을 확인할 수 있다. 물론 상품 목록에서 상품 상세로 이동한 경우에는 해당 메시지가 출력되지 않는다.
 	
