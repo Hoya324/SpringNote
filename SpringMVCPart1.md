@@ -3664,6 +3664,19 @@ public BasicItemController(ItemRepository itemRepository) {
 
 
 **BasicItemController에 추가**
+	
+<img width="519" alt="스크린샷 2023-05-20 오후 3 59 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/7ff4cf24-1446-413d-ad34-7ae6aefadd7b">
+
+PathVariable 로 넘어온 상품ID로 상품을 조회하고, 모델에 담아둔다. 그리고 뷰 템플릿을 호출한다.
+	
+	
+**상품 상세 뷰**
+
+정적 HTML을 뷰 템플릿(templates) 영역으로 복사하고 다음과 같이 수정하자. 
+
+`/resources/static/item.html` -> 복사 -> `/resources/templates/basic/item.html`
+	
+	
 
 
 	
