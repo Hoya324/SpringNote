@@ -53,8 +53,13 @@
 - [스프링 공식 튜토리얼](https://spring.io/guides/gs/serving-web-content/)
 - [스프링부트 메뉴얼](https://docs.spring.io/spring-boot/docs/2.1.6.RELEASE/reference/html/ boot-features-developing-web-applications.html#boot-features-spring-mvc-template- engines)
 
-스프링 부트 thymeleaf viewName 매핑 
-- resources:templates/ +{ViewName}+ .html
+> html 파일을 컴파일만 해주면 서버 재시작 없이 View 파일 변경이 가능하다.
+> 
+> `implementation 'org.springframework.boot:spring-boot-devtools'`
 
+<img width="1326" alt="스크린샷 2023-06-15 오후 4 50 45" src="https://github.com/Hoya324/SpringNote/assets/96857599/10a15c51-3637-4709-a048-e2676147f24b">
+
+- 인텔리J 컴파일 방법: 메뉴 build Recompile
+<img width="346" alt="스크린샷 2023-06-15 오후 4 52 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/3573c4a4-52e4-4a20-845c-5928187094d1">
 
 
