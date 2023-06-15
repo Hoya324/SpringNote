@@ -66,6 +66,13 @@
 ### h2 데이터베이스 실행
 <img width="647" alt="스크린샷 2023-06-15 오후 5 06 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/8a70f69d-ff62-4d16-bb8f-37c5679c7945">
 
+- 데이터베이스 파일 생성 방법
+- jdbc:h2:~/jpaShop (최소 한번)
+   - ~/jpaShop.mv.db 파일 생성 확인
+   - 이후 부터는 jdbc:h2:tcp://localhost/~/jpaShop 이렇게 접속
+
+<img width="803" alt="스크린샷 2023-06-15 오후 5 13 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/38c199c2-ab0f-4411-8947-be14249e66ea">
+
 <img width="803" alt="스크린샷 2023-06-15 오후 5 12 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/7c330f42-74db-40ac-8f7b-4e7a51f02219">
 
 
