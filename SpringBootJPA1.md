@@ -63,3 +63,10 @@
 <img width="346" alt="스크린샷 2023-06-15 오후 4 52 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/3573c4a4-52e4-4a20-845c-5928187094d1">
 
 
+### h2 데이터베이스 실행
+<img width="647" alt="스크린샷 2023-06-15 오후 5 06 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/8a70f69d-ff62-4d16-bb8f-37c5679c7945">
+
+<img width="803" alt="스크린샷 2023-06-15 오후 5 12 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/7c330f42-74db-40ac-8f7b-4e7a51f02219">
+
+
+
