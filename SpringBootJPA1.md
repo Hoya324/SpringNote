@@ -260,9 +260,364 @@
 
 - Member 도메인 객체에 Adress(@Embeddable-내장 타입이라는 뜻) 연결
 
-<img width="1147" alt="스크린샷 2023-06-18 오후 2 52 47" src="https://github.com/Hoya324/SpringNote/assets/96857599/1d49f24d-f48d-4b64-86d8-ba9729948aa8">
-
 <img width="1147" alt="스크린샷 2023-06-18 오후 2 53 14" src="https://github.com/Hoya324/SpringNote/assets/96857599/bd1e28eb-b7f1-4560-94c0-594175ea1cbb">
 
-- Member는 Order에 일대다 관계, Order는 Member에 다대일 관계
+<img width="1147" alt="스크린샷 2023-06-18 오후 2 52 47" src="https://github.com/Hoya324/SpringNote/assets/96857599/1d49f24d-f48d-4b64-86d8-ba9729948aa8">
 
+- Member는 Order에 일대다 관계, Order는 Member에 다대일 관계
+- 이때, foreign key를 가지고 있는 Order를 연관관계의 주인으로 정하고, Member에 @OneToMany(mappedBy = "member")를 통해 Order의 member 인스턴스의 거울(?)정도라고 표시한다.
+
+<img width="944" alt="스크린샷 2023-06-18 오후 4 19 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/8d7cf93c-6993-4e10-8782-36d365f1087f">
+
+<img width="944" alt="스크린샷 2023-06-18 오후 4 19 52" src="https://github.com/Hoya324/SpringNote/assets/96857599/166c713d-b6f7-4265-a915-fdd1a6d0a853">
+
+**주소값 타입(Address)에서 주의할 점**
+
+<img width="944" alt="스크린샷 2023-06-18 오후 6 08 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/9ab50f4c-474e-4102-ac35-077c200b29ab">
+
+> 참고: 값 타입은 변경 불가능하게 설계해야 한다.
+> 
+> @Setter 를 제거하고, 생성자에서 값을 모두 초기화해서 변경 불가능한 클래스를 만들자. JPA 스펙상 엔티
+티나 임베디드 타입( @Embeddable )은 자바 기본 생성자(default constructor)를 public 또는 protected 로 설정해야 한다. public 으로 두는 것 보다는 protected 로 설정하는 것이 그나마 더 안전 하다.
+> JPA가 이런 제약을 두는 이유는 JPA 구현 라이브러리가 객체를 생성할 때 리플랙션 같은 기술을 사용할 수 있도록 지원해야 하기 때문이다.
+
+#### colum까지 만드는 전체 코드
+
+**Member-회원 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter @Setter
+public class Member {
+
+    @Id @GeneratedValue
+    @Column(name = "member_id")
+    private Long id;
+
+    private String name;
+
+    @Embedded
+    private Address address;
+
+    @OneToMany(mappedBy = "member")
+    private List<Order> orders = new ArrayList<>();
+}
+
+```
+
+**Order-주문 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "orders") // 테이블멸을 관례적으로 orders로 설정
+@Getter @Setter
+public class Order {
+
+    @Id @GeneratedValue
+    @Column(name = "order_id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id") // foreign key
+    private Member member;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
+    private LocalDateTime orderDate; // 주문 시간
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
+
+
+}
+
+```
+
+**OrderSatus-주문 상태**
+
+```java
+package jpaBook.jpaShop.domain;
+
+public enum OrderStatus {
+    ORDER,
+    CANCEL
+}
+
+```
+
+**OrderItem-주문상품 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter @Setter
+public class OrderItem {
+
+    @Id @GeneratedValue
+    @Column(name = "order_item_id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    private int orderPrice; // 주문가격
+    private int count; // 주문 수량
+}
+
+```
+
+**Item-상품 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // 한 테이블에 몰아넣는 전략
+@DiscriminatorColumn(name = "dtype")
+@Getter @Setter
+public class Item {
+
+    @Id @GeneratedValue
+    @Column(name = "item_id")
+    private Long id;
+
+    private String name;
+
+    private int price;
+
+    private int stockQuantity;
+
+    // ManyToMany: 실무에서는 잘 사용하지 않지만, 예시를 위해 사용
+    @ManyToMany(mappedBy = "items")
+    private List<Category> categories = new ArrayList<>();
+
+}
+
+```
+
+**Book-(상품-도서 엔티티), Album-(상품-음반 엔티티), Movie-(상품-영화 엔티티)**
+
+```java
+package jpaBook.jpaShop.domain.item;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jpaBook.jpaShop.domain.Item;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@DiscriminatorValue("B")
+@Getter @Setter
+public class Book extends Item {
+
+    private String author;
+    private String isbn;
+}
+```
+
+```java
+package jpaBook.jpaShop.domain.item;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jpaBook.jpaShop.domain.Item;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Entity
+@DiscriminatorValue("A")
+@Getter @Setter
+public class Album extends Item {
+
+    private String artist;
+    private String etc;
+}
+
+```
+
+```java
+package jpaBook.jpaShop.domain.item;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jpaBook.jpaShop.domain.Item;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Entity
+@DiscriminatorValue("M")
+@Getter @Setter
+public class Movie extends Item {
+
+    private String director;
+    private String actor;
+}
+
+```
+
+**Delivery-배송 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+public class Delivery {
+
+    @Id @GeneratedValue
+    @Column(name = "delivery_id")
+    private Long id;
+
+    @OneToOne(mappedBy = "delivery")
+    private Order order;
+
+    @Embedded
+    private Address address;
+
+    // @Enumerated(EnumType.ORDINARY)는 인덱스로 찾기 때문에 중간에 추가되는 값이 생기면 문제가 생긴다.
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status;
+
+
+}
+
+```
+
+**DeliveryStatus-배송 상태**
+
+```java
+package jpaBook.jpaShop.domain;
+
+public enum DeliveryStatus {
+    READY, COMP
+}
+
+```
+
+**Category-카테고리 엔티티**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter @Setter
+public class Category {
+
+    @Id @GeneratedValue
+    @Column(name = "category_id")
+    private Long id;
+
+    private String name;
+
+    // ManyToMany: 실무에서는 잘 사용하지 않지만, 예시를 위해 사용
+    @ManyToMany
+    @JoinTable(name = "category_item",
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    private List<Item> items = new ArrayList<>();
+
+    // 카테고리 계층구조
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parent;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Category> child = new ArrayList<>();
+
+}
+
+```
+
+> 참고: 실무에서는 @ManyToMany를 사용하지 말자
+> 
+>  @ManyToMany 는 편리한 것 같지만, 중간 테이블( CATEGORY_ITEM )에 컬럼을 추가할 수 없고, 세밀하게 쿼 리를 실행하기 어렵기 때문에 실무에서 사용하기에는 한계가 있다. 중간 엔티티( CategoryItem 를 만들고 @ManyToOne , @OneToMany 로 매핑해서 사용하자. 정리하면 다대다 매핑을 일대다, 다대일 매핑으로 풀어 내서 사용하자.
+
+
+**Address-주소 값 타입**
+
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+
+/**
+ * 생성할 때만 값이 세팅되고, setter를 제공하지 않는 것이 좋은 설계
+ */
+
+@Embeddable // 내장 타입이라는 뜻
+@Getter
+public class Address {
+
+    String city;
+    String street;
+    String zipcode;
+
+    protected Address() {}
+
+    public Address(String city, String street, String zipcode) {
+        this.city = city;
+        this.street = street;
+        this.zipcode = zipcode;
+    }
+}
+
+```
