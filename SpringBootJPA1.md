@@ -1,5 +1,7 @@
 # 실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발
 
+## 프로젝트 환경설정
+
 <img width="1054" alt="스크린샷 2023-06-14 오후 3 21 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/9976fb42-4149-416a-aa0b-8c3637de862e">
 
 ### 라이브러리 살펴보기
@@ -157,9 +159,9 @@
 
 
 
-**도메인 분석 설계**
+## 도메인 분석 설계
 
-**요구사항 분석**
+### 요구사항 분석
 
 <img width="499" alt="스크린샷 2023-06-16 오후 2 16 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/4b22ff3c-c935-453e-bb3d-e7497d6b9f23">
 
@@ -282,6 +284,16 @@
 > JPA가 이런 제약을 두는 이유는 JPA 구현 라이브러리가 객체를 생성할 때 리플랙션 같은 기술을 사용할 수 있도록 지원해야 하기 때문이다.
 
 #### colum까지 만드는 전체 코드
+#### @XTOOne 관계에 모두 지연로딩으로 설정 @XTOOne(fetch = FetchType.LAZY) 
+#### cascade 설정 cascade = CascadeType.ALL
+#### 연관관계 메서드 추가
+
+- Cascade로 저장(persist), 삭제될 때 한번에 가능
+- 조건:
+   - Cascade되는 엔티티와 Cascade를 설정하는 엔티티의 라이프사이클이 동일하거나 비슷해야한다.
+   - Cascade되는 엔티티가 Cascade를 설정하는 엔티티에서만 사용되어야 한다.
+[Cascade 정리](https://hongchangsub.com/jpa-cascade-2/)
+
 
 **Member-회원 엔티티**
 
@@ -337,14 +349,14 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, )
     @JoinColumn(name = "member_id") // foreign key
     private Member member;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
@@ -353,6 +365,21 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
 
+   //==연관관계 메서드==// -> 호출하는 쪽에 생성
+    public void setMember(Member member) {
+        this.member = member;
+        member.getOrders().add(this);
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+        delivery.setOrder(this );
+    }
 
 }
 
@@ -388,11 +415,11 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -519,7 +546,7 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
-    @OneToOne(mappedBy = "delivery")
+    @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
     private Order order;
 
     @Embedded
@@ -575,12 +602,18 @@ public class Category {
     private List<Item> items = new ArrayList<>();
 
     // 카테고리 계층구조
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>();
+
+   //==연관관계 메서드==//
+    public void addChildCategory(Category child) {
+        this.child.add(child);
+        child.setParent(this);
+    }
 
 }
 
@@ -621,3 +654,76 @@ public class Address {
 }
 
 ```
+
+### 엔티티 설계시 주의점
+
+
+**⭐️엔티티에는 가급적 Setter를 사용하지 말자**
+Setter가 모두 열려있다. 변경 포인트가 너무 많아서, 유지보수가 어렵다. 나중에 리펙토링으로 Setter 제거
+
+
+**⭐️모든 연관관계는 지연로딩으로 설정!**
+- 즉시로딩( `EAGER` )은 예측이 어렵고, 어떤 SQL이 실행될지 추적하기 어렵다. 특히 JPQL을 실행할 때 N+1 문제가 자주 발생한다.
+- 실무에서 모든 연관관계는 지연로딩( `LAZY` )으로 설정해야 한다.
+- 연관된 엔티티를 함께 DB에서 조회해야 하면, fetch join 또는 엔티티 그래프 기능을 사용한다.
+- @XToOne(OneToOne, ManyToOne) 관계는 기본이 즉시로딩(fetch = FetchType.EAGER)이므로 직접 지연(fetch = FetchType.LAZY)로딩으로 설정해야 한다.
+
+**N+1 문제발생**
+[JPA N+1 문제 해결 방법 및 실무 적용 팁](https://programmer93.tistory.com/83)
+Order 클래스에서 Member과의 연관관계가 `@ManyToOne(fetch = FetchType.EAGER)`, 즉시로딩으로 되어있는 경우
+- JPQL(JPA가 제공하는 쿼리)를 사용할 때, JPQL이 SQL로 바로 번역됨
+`JPQL: SELECT o FROM order o;` -> `SQL: SELECT * FROM order`
+
+- 첫번째 날린 쿼리(order 하나)가 가져온 결과가 N개면 N+1번 Member를 가져오기 위해서 쿼리가 날라오는 것이 N+1 문제
+
+  
+**컬렉션은 필드에서 초기화 하자.**
+컬렉션은 필드에서 바로 초기화 하는 것이 안전하다.
+
+- null 문제에서 안전하다.
+- 하이버네이트는 엔티티를 영속화(persist) 할 때, 컬랙션을 감싸서 하이버네이트가 제공하는 내장 컬렉션으로 변경한다. 만약 `getOrders()`처럼 임의의 메서드에서 컬력션을 잘못 생성하면 하이버네이트 내부 메커니즘에 문제가 발생할 수 있다. 따라서 필드레벨에서 생성하는 것이 가장 안전하고, 코드도 간결하다.
+
+```java
+// Member 클래스
+// @OneToMany(mappedBy = "member")
+// private List<Order> orders = new ArrayList<>(); -> 이걸 바꾸지 못하게 하는게 Hibernate가 관리하는 대로 사용하는데 안전함
+
+Member member = new Member();
+System.out.println(member.getOrders().getClass());
+em.persist(member); // db에 저장하겠다.
+System.out.println(member.getOrders().getClass());
+
+//출력 결과
+class java.util.ArrayList
+class org.hibernate.collection.internal.PersistentBag
+```
+
+**테이블, 컬럼명 생성 전략**
+스프링 부트에서 하이버네이트 기본 매핑 전략을 변경해서 실제 테이블 필드명은 다름
+- https://docs.spring.io/spring-boot/docs/2.1.3.RELEASE/reference/htmlsingle/#howto- configure-hibernate-naming-strategy
+- http://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/ Hibernate_User_Guide.html#naming
+
+하이버네이트 기존 구현: 엔티티의 필드명을 그대로 테이블의 컬럼명으로 사용 ( SpringPhysicalNamingStrategy )
+스프링 부트 신규 설정 (엔티티(필드) 테이블(컬럼))
+1. 카멜 케이스 언더스코어(memberPoint member_point)
+2. .(점) _(언더스코어)
+3. 대문자 소문자
+
+**적용 2 단계**
+1. 논리명 생성: 명시적으로 컬럼, 테이블명을 직접 적지 않으면 ImplicitNamingStrategy 사용
+spring.jpa.hibernate.naming.implicit-strategy : 테이블이나, 컬럼명을 명시하지 않을 때 논리명
+적용,
+2. 물리명 적용:
+spring.jpa.hibernate.naming.physical-strategy : 모든 논리명에 적용됨, 실제 테이블에 적용 (username usernm 등으로 회사 룰로 바꿀 수 있음)
+
+**스프링 부트 기본 설정**
+`spring.jpa.hibernate.naming.implicit-strategy:
+org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy`
+`spring.jpa.hibernate.naming.physical-strategy:
+org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy`
+
+## 애플리케이션 구현 준비 
+
+### 구현 요구사항
+
+
