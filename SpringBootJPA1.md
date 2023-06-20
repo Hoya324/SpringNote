@@ -726,4 +726,55 @@ org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy`
 
 ### 구현 요구사항
 
+<img width="504" alt="스크린샷 2023-06-20 오후 2 57 01" src="https://github.com/Hoya324/SpringNote/assets/96857599/b50d04a7-7a34-4343-9352-3aead6518974">
+
+- 회원 기능
+  - 회원 등록
+  - 회원 조회
+- 상품 기능
+   - 상품 등록
+   - 상품 수정
+   - 상품 조회
+- 주문 기능
+   - 상품 주문
+   - 주문 내역 조회
+   - 주문 취소
+
+**예제를 단순화 하기 위해 다음 기능은 구현X**
+- 로그인과 권한 관리X
+- 파라미터 검증과 예외 처리X
+- 상품은 도서만 사용
+- 카테고리는 사용X 배송 정보는 사용X
+
+### 애플리케이션 아키텍처
+
+<img width="525" alt="스크린샷 2023-06-20 오후 3 44 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/677cf84e-8f59-4305-aad8-28227b5d4422">
+
+**계층형 구조 사용**
+- controller, web: 웹 계층
+- service: 비즈니스 로직, 트랜잭션 처리
+- repository: JPA를 직접 사용하는 계층, 엔티티 매니저 사용
+- domain: 엔티티가 모여 있는 계층, 모든 계층에서 사용
+
+**패키지 구조**
+- jpabook.jpashop
+   - domain
+   - exception
+   - repository
+   - service
+   - web
+
+**개발 순서: 서비스, 리포지토리 계층을 개발하고, 테스트 케이스를 작성해서 검증, 마지막에 웹 계층 적용**
+
+## 회원 도메인 개발
+
+**구현 기능**
+- 회원 등록
+- 회원 목록 조회
+
+**순서**
+- 회원 엔티티 코드 다시 보기
+- 회원 리포지토리 개발
+- 회원 서비스 개발
+- 회원 기능 테스트
 
