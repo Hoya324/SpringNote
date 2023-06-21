@@ -778,3 +778,272 @@ org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy`
 - 회원 서비스 개발
 - 회원 기능 테스트
 
+### 회원 리포지토리 개발
+
+**회원 리포지토리 코드**
+
+```java
+package jpaBook.jpaShop.repository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jpaBook.jpaShop.domain.Member;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class MemberRepository {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public void save(Member member) {
+        em.persist(member);
+    }
+
+    public Member findOne(Long id) {
+        return em.find(Member.class, id);
+    }
+
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class) // JPQL 작성-> em.createQuery(JPQL, 반환타입);
+                .getResultList();
+    }
+
+    public List<Member> findByName(String name) {
+        return em.createQuery("select m from Member m where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+}
+```
+
+**기술 설명**
+- @Repository : 스프링 빈으로 등록, JPA 예외를 스프링 기반 예외로 예외 변환
+- @PersistenceContext : 엔티티 메니저( EntityManager ) 주입
+- @PersistenceUnit : 엔티티 메니터 팩토리( EntityManagerFactory ) 주입
+  
+**기능 설명**
+- save()
+- findOne()
+- findAll()
+- findByName()
+
+
+### 회원 서비스 개발
+
+**회원 서비스 코드**
+```java
+
+package jpabook.jpashop.service;
+import jpabook.jpashop.domain.Member;
+import jpabook.jpashop.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
+@Service
+@Transactional(readOnly = true)
+public class MemberService {
+   @Autowired
+   MemberRepository memberRepository;
+   /**
+   * 회원가입
+   */
+   @Transactional //변경
+   public Long join(Member member) { 
+      validateDuplicateMember(member); //중복 회원 검증
+      memberRepository.save(member);
+      return member.getId();
+   }
+        
+   private void validateDuplicateMember(Member member) {
+       List<Member> findMembers = memberRepository.findByName(member.getName());
+       if (!findMembers.isEmpty()) {
+         throw new IllegalStateException("이미 존재하는 회원입니다."); 
+       }
+   }
+   /**
+   * 전체 회원 조회
+   */
+   public List<Member> findMembers() {
+       return memberRepository.findAll();
+   }
+
+   public Member findOne(Long memberId) {
+       return memberRepository.findOne(memberId);
+   } 
+}
+```
+
+**기술 설명**
+- @Service
+- @Transactional : 트랜잭션, 영속성 컨텍스트
+   - readOnly=true : 데이터의 변경이 없는 읽기 전용 메서드에 사용, 영속성 컨텍스트를 플러시 하지 않 으므로 약간의 성능 향상(읽기 전용에는 다 적용)
+   - 데이터베이스 드라이버가 지원하면 DB에서 성능 향상
+- @Autowired
+   - 생성자 Injection 많이 사용, 생성자가 하나면 생략 가능
+
+**기능 설명**
+- join()
+- findMembers()
+- findOne()
+
+> 참고: 실무에서는 검증 로직이 있어도 멀티 쓰레드 상황을 고려해서 회원 테이블의 회원명 컬럼에 유니크 제약 조건을 추가하는 것이 안전하다.
+
+> 참고: 스프링 필드 주입 대신에 생성자 주입을 사용하자.
+ 
+**필드 주입**
+```java
+
+public class MemberService {
+   @Autowired
+   MemberRepository memberRepository;
+   ...
+}
+```
+
+**생성자 주입**
+```java
+public class MemberService {
+   private final MemberRepository memberRepository;
+   
+   public MemberService(MemberRepository memberRepository) {
+      this.memberRepository = memberRepository;
+   }
+   ... 
+}
+```
+- 생성자 주입 방식을 권장
+- 변경 불가능한 안전한 객체 생성 가능
+- 생성자가 하나면, @Autowired를 생략할 수 있다.
+- final 키워드를 추가하면 컴파일 시점에 memberRepository를 설정하지 않는 오류를 체크할 수 있다. (보통 기본 생성자를 추가할 때 발견)
+
+
+**lombok**
+```java
+@RequiredArgsConstructor
+public class MemberService {
+   private final MemberRepository memberRepository;
+   ... 
+}
+```
+
+> 참고: 스프링 데이터 JPA를 사용하면 EntityManager 도 주입 가능
+
+```java
+@Repository
+@RequiredArgsConstructor
+public class MemberRepository {
+   private final EntityManager em;
+   ... 
+}
+```
+
+**MemberService 최종 코드**
+
+```java
+package jpaBook.jpaShop.service;
+
+import jpaBook.jpaShop.domain.Member;
+import jpaBook.jpaShop.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true) // 스프링꺼 사용, 조회기능이 많기 때문에 default를 readOnly = true로 잡음
+@RequiredArgsConstructor // 생성자 생성해줌
+public class MemberService {
+
+    private final MemberRepository memberRepository;
+
+//    @Autowired -> 생성자 하나일 경우 필요없음
+//    public MemberService(MemberRepository memberRepository) {
+//        this.memberRepository = memberRepository;
+//    }
+
+    /**
+     * 회원 가입
+     */
+    @Transactional // 조회가 아닌경우 @Transactional
+    public Long join(Member member) {
+        // 중복 처리
+        validateDuplicateMember(member);
+        memberRepository.save(member);
+        // @GenerateValue로 인해 DB에 저장하지 않아도 조회할 수 있는 Key-Value 형태의 key id를 조회가능
+        return member.getId();
+    }
+
+    private void validateDuplicateMember(Member member) {
+        // 예외처리 -> 데이터베이스에서 UNIQUE 조건 걸어주는게 좋음
+        List<Member> findMembers = memberRepository.findByName(member.getName());
+        if (findMembers.size() > 0) {
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        }
+    }
+
+    // 회원 전체 조회
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
+    }
+
+    // 단건 조회
+    public Member findOne(Long memberId) {
+        return memberRepository.findOne(memberId);
+    }
+}
+```
+
+**MemberRepository EntityManager 주입**
+
+```java
+package jpaBook.jpaShop.repository;
+
+import jakarta.persistence.EntityManager;
+import jpaBook.jpaShop.domain.Member;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class MemberRepository {
+
+
+    private final EntityManager em;
+
+    public void save(Member member) {
+        em.persist(member);
+    }
+
+    // 단건 조회
+    public Member findOne(Long id) {
+        return em.find(Member.class, id);
+    }
+
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class) // JPQL 작성-> em.createQuery(JPQL, 반환타입);
+                .getResultList();
+    }
+
+    public List<Member> findByName(String name) {
+        return em.createQuery("select m from Member m where m.name = :name", Member.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+}
+```
+
+
+### 회원 기능 테스트
+
+**테스트 요구사항**
+- 회원가입을 성공해야 한다.
+- 회원가입 할 때 같은 이름이 있으면 예외가 발생해야 한다.
+
+
