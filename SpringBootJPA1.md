@@ -1047,3 +1047,116 @@ public class MemberRepository {
 - 회원가입 할 때 같은 이름이 있으면 예외가 발생해야 한다.
 
 
+```java
+package jpaBook.jpaShop.service;
+
+import jakarta.persistence.EntityManager;
+import jpaBook.jpaShop.domain.Member;
+import jpaBook.jpaShop.repository.MemberRepository;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@Transactional
+//@Rollback(false) -> Transactional이 테스트에서는 데이터를 모두 날리기 때문에 Rollback 시키지 않고 확인하려면 입력해준다.
+public class MemberServiceTest {
+
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
+
+    @Test
+    public void 회원가입() throws Exception {
+        // given
+        Member member = new Member();
+        member.setName("kim");
+
+        // when
+        Long saveId = memberService.join(member);
+
+        // then
+//        em.flush();
+        assertEquals(member, memberRepository.findOne(saveId));
+
+     }
+
+     @Test(expected = IllegalStateException.class)
+     public void 중복_회원_예외() throws Exception {
+         // given
+         Member member1 = new Member();
+         member1.setName("kim");
+         Member member2 = new Member();
+         member2.setName("kim");
+
+         // when
+         memberService.join(member1);
+//         try {
+//             memberService.join(member2); // 예외가 터져야함
+//         } catch (IllegalStateException e) {
+//             return;
+//         }
+         memberService.join(member2);
+
+
+
+         // then
+         fail("예외가 발생해야한다.");
+
+
+      }
+
+
+}
+```
+
+
+**기술 설명**
+- @RunWith(SpringRunner.class) : 스프링과 테스트 통합
+- @SpringBootTest : 스프링 부트 띄우고 테스트(이게 없으면 @Autowired 다 실패)
+- @Transactional : 반복 가능한 테스트 지원, 각각의 테스트를 실행할 때마다 트랜잭션을 시작하고 **테스트가 끝나면 트랜잭션을 강제로 롤백** (이 어노테이션이 테스트 케이스에서 사용될 때만 롤백)
+
+**기능 설명**
+- 회원가입 테스트
+- 중복 회원 예외처리 테스트
+
+  
+> 참고: 테스트 케이스 작성 고수 되는 마법: Given, When, Then (http://martinfowler.com/bliki/GivenWhenThen.html)
+> 
+> 이 방법이 필수는 아니지만 이 방법을 기본으로 해서 다양하게 응용하는 것을 권장한다.
+
+**테스트 케이스를 위한 설정**
+테스트는 케이스 격리된 환경에서 실행하고, 끝나면 데이터를 초기화하는 것이 좋다. 그런 면에서 메모리 DB를 사용하는 것이 가장 이상적이다.
+추가로 테스트 케이스를 위한 스프링 환경과, 일반적으로 애플리케이션을 실행하는 환경은 보통 다르므로 설정 파일을 다르게 사용하자.
+다음과 같이 간단하게 테스트용 설정 파일을 추가하면 된다.
+
+`test/resources/application.yml`
+```yml
+spring:
+#  datasource:
+#    url: jdbc:h2:mem:test # 메모리 db
+#    username: ng
+#    password:
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.orm.jdbc.bind: trace
+```
+
+
+
