@@ -880,7 +880,7 @@ public class MemberService {
 **기술 설명**
 - @Service
 - @Transactional : 트랜잭션, 영속성 컨텍스트
-   - readOnly=true : 데이터의 변경이 없는 읽기 전용 메서드에 사용, 영속성 컨텍스트를 플러시 하지 않 으므로 약간의 성능 향상(읽기 전용에는 다 적용)
+   - readOnly=true : 데이터의 변경이 없는 읽기 전용 메서드에 사용, 영속성 컨텍스트를 플러시 하지 않으므로 약간의 성능 향상(읽기 전용에는 다 적용)
    - 데이터베이스 드라이버가 지원하면 DB에서 성능 향상
 - @Autowired
    - 생성자 Injection 많이 사용, 생성자가 하나면 생략 가능
@@ -1158,6 +1158,198 @@ logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.orm.jdbc.bind: trace
 ```
+
+
+
+### 상품 도메인 개발
+
+**구현 기능**
+- 상품 등록
+- 상품 목록 조회
+- 상품 수정
+  
+**순서**
+- 상품 엔티티 개발(비즈니스 로직 추가)
+- 상품 리포지토리 개발
+- 상품 서비스 개발
+- 상품 기능 테스트
+
+### 상품 엔티티 개발(비즈니스 로직 추가) 
+
+- **비지니스 로직에서 사용할 value들이 있는 엔티티에서 비지니스 로직을 짜는 것이 좋다.(가장 객체지향적인 방식)**
+
+**상품 엔티티 코드**
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import jpaBook.jpaShop.exception.NotEnoughStockException;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // 한 테이블에 몰아넣는 전략
+@DiscriminatorColumn(name = "dtype") // 각 상품들을 구분짓기
+@Getter @Setter
+public class Item {
+
+    @Id @GeneratedValue
+    @Column(name = "item_id")
+    private Long id;
+
+    private String name;
+
+    private int price;
+
+    private int stockQuantity;
+
+    // ManyToMany: 실무에서는 잘 사용하지 않지만, 예시를 위해 사용
+    @ManyToMany(mappedBy = "items")
+    private List<Category> categories = new ArrayList<>();
+
+    //==비지니스 로직=// - 상품 도메인 개발
+
+    /**
+     * stock(재고) 증가
+     */
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    /**
+     * stock 감소
+     */
+    public void restStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (restStock < 0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        this.stockQuantity = restStock;
+    }
+}
+```
+
+**예외 추가**
+```java
+package jpaBook.jpaShop.exception;
+
+public class NotEnoughStockException extends RuntimeException{
+    /**
+     * RuntimeException 메서드 오버라이딩함
+     */
+
+    public NotEnoughStockException() {
+        super();
+    }
+
+    public NotEnoughStockException(String message) {
+        super(message);
+    }
+
+    public NotEnoughStockException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public NotEnoughStockException(Throwable cause) {
+        super(cause);
+    }
+
+}
+```
+
+**비즈니스 로직 분석**
+- `addStock()` : 메서드는 파라미터로 넘어온 수만큼 재고를 늘린다. 이 메서드는 재고가 증가하거나 상품 주 문을 취소해서 재고를 다시 늘려야 할 때 사용한다.
+- `removeStock()` : 메서드는 파라미터로 넘어온 수만큼 재고를 줄인다. 만약 재고가 부족하면 예외가 발생한 다. 주로 상품을 주문할 때 사용한다.
+- 
+
+### 상품 리포지토리 개발
+
+**상품 리포지토리 코드**
+
+```java
+package jpaBook.jpaShop.repository;
+
+import jakarta.persistence.EntityManager;
+import jpaBook.jpaShop.domain.Item;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class ItemRepository {
+
+    private final EntityManager em;
+
+    public void save(Item item) {
+        // jpa에서 저장하기 전까지는 id 값이 없기 때문에 새로 등록하는 것
+        if (item.getId() == null) {
+            em.persist(item);
+        }
+        // 이미 존재했던 item 업데이
+        else {
+            em.merge(item);
+        }
+    }
+
+    public Item findOne(Long id) {
+        return em.find(Item.class, id);
+    }
+
+    public List<Item> findAll() {
+        return em.createQuery("select i from Item i", Item.class)
+                .getResultList();
+    }
+}
+```
+
+**기능 설명**
+- `save()`
+   - id 가 없으면 신규로 보고 persist() 실행
+   - id 가 있으면 이미 데이터베이스에 저장된 엔티티를 수정한다고 보고, merge() 를 실행, 자세한 내용은 뒤에 웹에서 설명(그냥 지금은 저장한다 정도로 생각하자)
+
+
+### 상품 서비스 개발
+
+**상품 서비스 코드**
+```java
+package jpaBook.jpaShop.service;
+
+import jpaBook.jpaShop.domain.Item;
+import jpaBook.jpaShop.repository.ItemRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class ItemService {
+
+    private final ItemRepository itemRepository;
+
+    @Transactional
+    public void saveItem(Item item) {
+        itemRepository.save(item);
+    }
+
+    public List<Item> findItems() {
+        return itemRepository.findAll();
+    }
+
+    public Item findOne(Long itemId) {
+        return itemRepository.findOne(itemId);
+    }
+}
+```
+
+상품 서비스는 상품 리포지토리에 단순히 위임만 하는 클래스
 
 
 
