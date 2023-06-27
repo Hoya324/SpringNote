@@ -1351,5 +1351,227 @@ public class ItemService {
 
 상품 서비스는 상품 리포지토리에 단순히 위임만 하는 클래스
 
+### 주문 도메인 개발
+
+**구현 기능**
+- 상품 주문
+- 주문 내역 조회
+- 주문 취소
+
+**순서**
+- 주문 엔티티, 주문상품 엔티티 개발
+- 주문 리포지토리 개발
+- 주문 서비스 개발
+- 주문 검색 기능 개발
+- 주문 기능 테스트
+  
+### 주문, 주문상품 엔티티 개발 
+
+주문 엔티티 개발
+
+**주문 엔티티 코드**
+```java
+package jpaBook.jpaShop.domain;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "orders") // 테이블멸을 관례적으로 orders로 설정
+@Getter @Setter
+public class Order {
+
+    @Id @GeneratedValue
+    @Column(name = "order_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id") // foreign key
+    private Member member;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "delivery_id")
+    private Delivery delivery;
+
+    private LocalDateTime orderDate; // 주문 시간
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; // 주문 상태 [ORDER, CANCEL]
+
+    //==연관관계 메서드==// -> 호출하는 쪽에 생성
+    public void setMember(Member member) {
+        this.member = member;
+        member.getOrders().add(this);
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+        delivery.setOrder(this);
+    }
+
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    //==비지니스 로직==//
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        }
+
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==//
+
+    /**
+     * 전체 주문 가격 조회
+     */
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+    }
+
+}
+```
+
+**기능 설명**
+- **생성 메서드**( createOrder() ): 주문 엔티티를 생성할 때 사용한다. 주문 회원, 배송정보, 주문상품의 정보 를 받아서 실제 주문 엔티티를 생성한다.
+- **주문 취소**( cancel() ): 주문 취소시 사용한다. 주문 상태를 취소로 변경하고 주문상품에 주문 취소를 알린 다. 만약 이미 배송을 완료한 상품이면 주문을 취소하지 못하도록 예외를 발생시킨다.
+- **전체 주문 가격 조회**: 주문 시 사용한 전체 주문 가격을 조회한다. 전체 주문 가격을 알려면 각각의 주문상품 가격을 알아야 한다. 로직을 보면 연관된 주문상품들의 가격을 조회해서 더한 값을 반환한다. (실무에서는 주로 주문에 전체 주문 가격 필드를 두고 역정규화 한다.)
+  
+주문상품 엔티티 개발
+
+**주문상품 엔티티 코드**
+```java
+package jpaBook.jpaShop.domain;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter @Setter
+public class OrderItem {
+
+    @Id @GeneratedValue
+    @Column(name = "order_item_id")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    private Item item;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    private int orderPrice; // 주문가격
+    private int count; // 주문 수량
+
+    //==생성 메서드==//
+    public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItem(item);
+        orderItem.setOrderPrice(orderPrice);
+        orderItem.setCount(count);
+
+        item.removeStock(count);
+        return orderItem;
+    }
+
+    //==비지니스 로직==//
+    public void cancel() {
+        getItem().addStock(count);
+    }
+
+    //==조회 로직==//
+
+    /**
+     * 주문상품 전체 가격 조회
+     */
+    public int getTotalPrice() {
+        return getOrderPrice() * getCount();
+    }
+}
+```
+
+**기능 설명**
+- **생성 메서드**( createOrderItem() ): 주문 상품, 가격, 수량 정보를 사용해서 주문상품 엔티티를 생성한다. 그리고 item.removeStock(count) 를 호출해서 주문한 수량만큼 상품의 재고를 줄인다.
+- **주문 취소**( cancel() ): getItem().addStock(count) 를 호출해서 취소한 주문 수량만큼 상품의 재고를 증가시킨다.
+- **주문 가격 조회**( getTotalPrice() ): 주문 가격에 수량을 곱한 값을 반환한다.
+
+
+### 주문 리포지토리 개발
+```java
+package jpaBook.jpaShop.repository;
+
+import jakarta.persistence.EntityManager;
+import jpaBook.jpaShop.domain.Order;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+@RequiredArgsConstructor
+public class OrderRepository {
+
+    private final EntityManager em;
+
+    public void save(Order order) {
+        em.persist(order);
+    }
+
+    public Order findOne(Long id) {
+        return em.find(Order.class, id);
+    }
+
+//    public List<Order> findAll(OrderSearch orderSearch) {}
+}
+```
+
+주문 리포지토리에는 주문 엔티티를 저장하고 검색하는 기능이 있다. 마지막의 findAll(OrderSearch orderSearch) 메서드는 조금 뒤에 있는 주문 검색 기능에서 자세히 알아보자.
+
+### 주문 서비스 개발
+
+**주문 서비스 코드**
+
+
+주문 서비스는 주문 엔티티와 주문 상품 엔티티의 비즈니스 로직을 활용해서 주문, 주문 취소, 주문 내역 검 색 기능을 제공한다.
+참고: 예제를 단순화하려고 한 번에 하나의 상품만 주문할 수 있다.
+주문( order() ): 주문하는 회원 식별자, 상품 식별자, 주문 수량 정보를 받아서 실제 주문 엔티티를 생성한 후 저장한다.
+주문 취소( cancelOrder() ): 주문 식별자를 받아서 주문 엔티티를 조회한 후 주문 엔티티에 주문 취소를 요청한다.
+주문 검색( findOrders() ): OrderSearch 라는 검색 조건을 가진 객체로 주문 엔티티를 검색한다. 자세한 내용은 다음에 나오는 주문 검색 기능에서 알아보자.
