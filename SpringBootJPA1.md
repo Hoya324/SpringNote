@@ -1569,13 +1569,251 @@ public class OrderRepository {
 
 **주문 서비스 코드**
 
+`주문`
+``java
+package jpaBook.jpaShop.service;
+
+import jpaBook.jpaShop.domain.*;
+import jpaBook.jpaShop.repository.ItemRepository;
+import jpaBook.jpaShop.repository.MemberRepository;
+import jpaBook.jpaShop.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
+
+    /**
+     * 주문
+     */
+    @Transactional
+    public Long order(Long memberId, Long itemId, int count) {
+
+        // 엔티티 조회
+        Member member = memberRepository.findOne(memberId);
+        Item item = itemRepository.findOne(itemId);
+
+        // 배송정보 생성
+        Delivery delivery = new Delivery();
+        delivery.setAddress(member.getAddress());
+
+        // 주문상품 생성
+        OrderItem orderItem = OrderItem.createOrderItem(item, item.getPrice(), count);
+
+        // 주문 생성
+        Order order = Order.createOrder(member, delivery, orderItem);
+
+        // 주문 저장
+        orderRepository.save(order);
+
+        return order.getId();
+
+    }
+
+    // 취소 
+
+    // 검색
+
+}
+```
+- Order과 OrderItem과 생성하지 않도록 하는 것이 좋음
+- Order과 OrderItem에 `@NoArgsConstructor(access = AccessLevel.PROTECTED)` 또는 `protected OrderItem() {}` 추가
+
+`취소`
+```java
+    // 취소
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        // 주문 엔티티 조회
+        Order order = orderRepository.findOne(orderId);
+        // 주문 취소
+        order.cancel();
+    }
+```
+
+- order에서 cancel()
+
+```java
+    //==비지니스 로직==//
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        }
+
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel();
+        }
+    }
+```
+
+- orderItem에서 cancel()
+
+```java
+    //==비지니스 로직==//
+    public void cancel() {
+        getItem().addStock(count);
+    }
+```
+
+주문 서비스는 주문 엔티티와 주문 상품 엔티티의 비즈니스 로직을 활용해서 주문, 주문 취소, 주문 내역 검색 기능을 제공한다.
+
+> 참고: 예제를 단순화하려고 한 번에 하나의 상품만 주문할 수 있다.
+
+- **주문**( order() ): 주문하는 회원 식별자, 상품 식별자, 주문 수량 정보를 받아서 실제 주문 엔티티를 생성한 후 저장한다.
+- **주문 취소**( cancelOrder() ): 주문 식별자를 받아서 주문 엔티티를 조회한 후 주문 엔티티에 주문 취소를 요청한다.
+- **주문 검색**( findOrders() ): OrderSearch 라는 검색 조건을 가진 객체로 주문 엔티티를 검색한다. 자세한 내용은 다음에 나오는 주문 검색 기능에서 알아보자.
+
+> 참고: 주문 서비스의 주문과 주문 취소 메서드를 보면 비즈니스 로직 대부분이 엔티티에 있다.
+> 서비스 계층은 단순히 엔티티에 필요한 요청을 위임하는 역할을 한다.
+> 
+> 이처럼 엔티티가 비즈니스 로직을 가지고 객체 지향의 특성을 적극 활용하는 것을 **도메인 모델 패턴**(http://martinfowler.com/eaaCatalog/domainModel.html)이라 한다.
+>
+> 반대로 엔티티에는 비즈니스 로직이 거의 없고 서비스 계층에서 대부분 의 비즈니스 로직을 처리하는 것을 **트랜잭션 스크립트 패턴**(http://martinfowler.com/eaaCatalog/transactionScript.html)이라 한다.
 
 
+### 주문 기능 테스트
 
-주문 서비스는 주문 엔티티와 주문 상품 엔티티의 비즈니스 로직을 활용해서 주문, 주문 취소, 주문 내역 검 색 기능을 제공한다.
-참고: 예제를 단순화하려고 한 번에 하나의 상품만 주문할 수 있다.
-주문( order() ): 주문하는 회원 식별자, 상품 식별자, 주문 수량 정보를 받아서 실제 주문 엔티티를 생성한 후 저장한다.
-주문 취소( cancelOrder() ): 주문 식별자를 받아서 주문 엔티티를 조회한 후 주문 엔티티에 주문 취소를 요청한다.
-주문 검색( findOrders() ): OrderSearch 라는 검색 조건을 가진 객체로 주문 엔티티를 검색한다. 자세한 내용은 다음에 나오는 주문 검색 기능에서 알아보자.
+**테스트 요구사항**
+- 상품 주문이 성공해야 한다.
+- 상품을 주문할 때 재고 수량을 초과하면 안 된다.
+- 주문 취소가 성공해야 한다.
+
+**상품 주문 테스트 코드**
+
+`상품 주문 테스트`
+
+```java
+package jpaBook.jpaShop.service;
+
+import jakarta.persistence.EntityManager;
+import jpaBook.jpaShop.domain.Address;
+import jpaBook.jpaShop.domain.Member;
+import jpaBook.jpaShop.domain.Order;
+import jpaBook.jpaShop.domain.OrderStatus;
+import jpaBook.jpaShop.domain.item.Book;
+import jpaBook.jpaShop.repository.OrderRepository;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@Transactional
+public class OrderServiceTest {
+
+    @Autowired EntityManager em;
+    @Autowired OrderService orderService;
+    @Autowired OrderRepository orderRepository;
+    
+    
+    @Test
+    public void 상품주문() throws Exception {
+        // given
+        Member member = new Member();
+        member.setName("회원1");
+        member.setAddress(new Address("서울", "강가", "12-244"));
+        em.persist(member);
+
+        Book book = new Book();
+        book.setName("JPA");
+        book.setPrice(10000);
+        book.setStockQuantity(10);
+        em.persist(book);
+
+        int orderCount = 2;
+
+        // when
+        Long orderId = orderService.order(member.getId(), book.getId(), orderCount);
+
+        // then
+        Order getOrder = orderRepository.findOne(orderId);
+
+        assertEquals("상품 주문시 상태는 ORDER", OrderStatus.ORDER, getOrder.getStatus());
+        assertEquals("주문한 상품 종류 수가 정확해야한다.", 1, getOrder.getOrderItems().size());
+        assertEquals("주문 가격은 가격 * 수량이다.", 10000 * orderCount, getOrder.getTotalPrice());
+        assertEquals("주문 수량만큼 재고가 줄어야한다.", 8, book.getStockQuantity());
+    }
 
 
+    @Test
+    public void 상품주문_재고수량초과() throws Exception {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+
+    @Test
+    public void 주문취소() throws Exception {
+     // given
+
+     // when
+
+     // then
+
+    }
+
+
+}
+```
+
+`상품주문 재고수량초과 테스트`
+
+```java
+    @Test(expected = NotEnoughStockException.class)
+    public void 상품주문_재고수량초과() throws Exception {
+        // given
+        Member member = createMember();
+        Item item = createBook("Jpa", 10000, 10);
+
+        int orderCount = 11;
+
+        // when
+        orderService.order(member.getId(), item.getId(), orderCount);
+
+        // then
+        fail("재고 수량 부족 예외가 발생해야 한다.");
+
+    }
+```
+
+- Member, book 따로 생성
+  
+```java
+    private Book createBook(String name, int price, int stockQuantity) {
+        Book book = new Book();
+        book.setName(name);
+        book.setPrice(price);
+        book.setStockQuantity(stockQuantity);
+        em.persist(book);
+        return book;
+    }
+
+    private Member createMember() {
+        Member member = new Member();
+        member.setName("회원1");
+        member.setAddress(new Address("서울", "강가", "12-244"));
+        em.persist(member);
+        return member;
+    }
+```
