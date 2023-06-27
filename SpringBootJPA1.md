@@ -1777,6 +1777,8 @@ public class OrderServiceTest {
 }
 ```
 
+상품주문이 정상 동작하는지 확인하는 테스트다. Given 절에서 테스트를 위한 회원과 상품을 만들고 When 절에서 실제 상품을 주문하고 Then 절에서 주문 가격이 올바른지, 주문 후 재고 수량이 정확히 줄었는지 검증한다.
+
 `상품주문 재고수량초과 테스트`
 
 ```java
@@ -1797,7 +1799,12 @@ public class OrderServiceTest {
     }
 ```
 
-- Member, book 따로 생성
+재고 수량을 초과해서 상품을 주문해보자. 이때는 NotEnoughStockException 예외가 발생해야 한다.
+
+코드를 보면 재고는 10권인데 orderCount = 11 로 재고보다 1권 더 많은 수량을 주문했다. 주문 초과로 다음 로직에서 예외가 발생한다.
+
+
+- Member, book 생성 메서드
   
 ```java
     private Book createBook(String name, int price, int stockQuantity) {
@@ -1817,3 +1824,75 @@ public class OrderServiceTest {
         return member;
     }
 ```
+
+`주문취소`
+
+```java
+    @Test
+    public void 주문취소() throws Exception {
+        // given
+        Member member = createMember();
+        Item item = createBook("Jpa", 10000, 10);
+
+        int orderCount = 2;
+
+        Long orderId = orderService.order(member.getId(), item.getId(), orderCount);
+
+        // when
+        orderService.cancelOrder(orderId);
+
+        // then
+        Order getOrder = orderRepository.findOne(orderId);
+
+        assertEquals("주문 취소시 상태는 Cancel 이다.", OrderStatus.CANCEL, getOrder.getStatus());
+        assertEquals("주문이 취소된 상품은 그만큼 재고가 증가해야 한다.", 10, item.getStockQuantity()); 
+
+
+    }
+```
+
+주문 취소 테스트 코드를 작성하자. 주문을 취소하면 그만큼 재고가 증가해야 한다.
+주문을 취소하려면 먼저 주문을 해야 한다. Given 절에서 주문하고 When 절에서 해당 주문을 취소했다. Then 절에서 주문상태가 주문 취소 상태인지( CANCEL ), 취소한 만큼 재고가 증가했는지 검증한다.
+
+
+### 테스트 코드 작성 요령
+
+- 각 로직(메서드) 하나당 단위테스트가 좋은 테스트다.(DB에 상관없이 짜는 것이 중요)
+
+
+### 주문 검색 기능 개발
+
+JPA에서 **동적 쿼리**를 어떻게 해결해야 하는가?
+
+JPA Criteria는 JPA 표준 스펙이지만 실무에서 사용하기에 너무 복잡하다. 
+결국 다른 대안이 필요하다. 많 은 개발자가 비슷한 고민을 했지만, 가장 멋진 해결책은 Querydsl이 제시했다.
+**Querydsl** 소개장에서 간단히 언급하겠다. 지금은 이대로 진행하자.
+
+```java
+public List<Order> findAll(OrderSearch orderSearch) {
+   QOrder order = QOrder. order;
+   QMember member = QMember. member;
+
+   return query
+      .select (order)
+      .from(order)
+      .join(order. member, member)
+      .where(statusEq(orderSearch.getOrderStatus()),
+            nameLike (orderSearch.getMemberName()))
+   .limit(1000)
+   .fetch();
+}
+
+private BooleanExpression statusEq(OrderStatus statusCond) {
+   if (statusCond == null) {
+      return null;
+   }
+   return order.status.eq (statusCond);
+}
+
+private BooleanExpression nameLike(String nameCond) {
+   if (!StringUtils.hasText (nameCond) ) {
+      return null;
+}
+```
+
