@@ -1896,3 +1896,180 @@ private BooleanExpression nameLike(String nameCond) {
 }
 ```
 
+
+## 웹 계층 개발
+
+- 홈 화면
+- 회원 기능
+   - 회원 등록
+   - 회원 조회
+- 상품 기능
+   - 상품 등록
+   - 상품 수정
+   - 상품 조회
+- 주문 기능
+   - 상품 주문
+   - 주문 내역 조회
+   - 주문 취소
+
+     
+상품 등록
+상품 목록
+상품 수정
+변경 감지와 병합 
+상품 주문
+
+
+### 홈 화면과 레이아웃
+
+**홈 컨트롤러 등록** 
+```java
+package jpaBook.jpaShop.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@Slf4j
+public class HomeController {
+    
+    @RequestMapping("/")
+    public String home() {
+        log.info("home controller");
+        return "home";
+    }
+}
+```
+
+**타임리프 템플릿 등록**
+
+**home.html**
+```html
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+	<title>Hello</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container">
+	<div th:replace="fragments/bodyHeader :: bodyHeader" />
+	<div class="jumbotron"> <h1>HELLO SHOP</h1>
+		<p class="lead">회원 기능</p> <p>
+			<a class="btn btn-lg btn-secondary" href="/members/new">회원 가입</a>
+			<a class="btn btn-lg btn-secondary" href="/members">회원 목록</a> </p>
+		<p class="lead">상품 기능</p> <p>
+			<a class="btn btn-lg btn-dark" href="/items/new">상품 등록</a>
+			<a class="btn btn-lg btn-dark" href="/items">상품 목록</a> </p>
+		<p class="lead">주문 기능</p> <p>
+			<a class="btn btn-lg btn-info" href="/order">상품 주문</a>
+			<a class="btn btn-lg btn-info" href="/orders">주문 내역</a> </p>
+	</div>
+	<div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>
+```
+
+**fragments/header.html**
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-
+  to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css" integrity="sha384-
+  ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+  <!-- Custom styles for this template -->
+  <link href="/css/jumbotron-narrow.css" rel="stylesheet">
+  <title>Hello, world!</title>
+</head>
+```
+
+**fragments/bodyHeader.html**
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="header" th:fragment="bodyHeader">
+  <ul class="nav nav-pills pull-right">
+    <li><a href="/">Home</a></li>
+  </ul>
+  <a href="/"><h3 class="text-muted">HELLO SHOP</h3></a>
+</div>
+```
+
+**fragments/footer.html**
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="footer" th:fragment="footer">
+  <p>&copy; Hello Shop V2</p>
+</div>
+```
+
+> 참고: Hierarchical-style layouts
+> 
+> 예제에서는 뷰 템플릿을 최대한 간단하게 설명하려고, header , footer 같은 템플릿 파일을 반복해서 포
+함한다. 다음 링크의 Hierarchical-style layouts을 참고하면 이런 부분도 중복을 제거할 수 있다.
+> https://www.thymeleaf.org/doc/articles/layouts.html
+
+> 참고: 뷰 템플릿 변경사항을 서버 재시작 없이 즉시 반영하기
+> 
+> 1. spring-boot-devtools 추가
+> 2. html 파일 build-> Recompile
+
+
+### 회원 등록
+- 폼 객체를 사용해서 화면 계층과 서비스 계층을 명확하게 분리한다.
+
+**전반적인 동작순서**
+- "~/"을 요청
+- controller에서 요청 url을 처리
+```java
+@RequestMapping("/")
+    public String home() {
+        log.info("home controller");
+        return "home";
+    }
+```
+- `return "home";` 이므로 home.html로 이동
+ 
+
+
+**회원 등록 폼 객체**
+```java
+package jpaBook.jpaShop.controller;
+
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class MemberForm {
+
+    @NotEmpty(message = "회원 이름은 필수 입니다.")
+    private String name;
+
+    private String city;
+    private String street;
+    private String zipcode;
+}
+```
+
+**회원 등록 컨트롤러**
+
+
+
+
+- 에러 생길 때 에러 메세지 띄우기
+
+```html
+<input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요"
+             th:class="${#fields.hasErrors('name')}? 'form-controlfieldError' : 'form-control'">
+      <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect date</p>
+```
