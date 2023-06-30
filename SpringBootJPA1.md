@@ -2106,6 +2106,8 @@ public class MemberController {
 }
 ```
 
+- `@Valid MemberForm form`으로 Validation을 명시해주면, memberForm에서 `@NotEmpty(message = "회원 이름은 필수 입니다.")`라고 명해시둔 값을 비워두지 않게 할 수 있다.(에러 처리)
+
 - 에러 생길 때 에러 메세지 띄우기
 
 ```html
@@ -2168,3 +2170,71 @@ public class MemberController {
 > 실무에서 엔티티는 핵심 비즈니스 로직만 가지고 있고, 화면을 위한 로직은 없어야 한다. 화면이나 API에 맞는 폼 객체나 DTO를 사용하자. 그래서 화면이나 API 요구사항을 이것들로 처리하고, 엔티티는 최대한 순수 하게 유지하자.
 
 ### API를 만들 때는 절대 외부로 반환하면 안 된다. -> API는 스팩이기 때문 -> API가 변하면 안 됨
+
+### 상품 등록
+
+**상품 등록 폼**
+```java
+package jpaBook.jpaShop.controller;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class BookForm {
+
+    private Long id;
+
+    private String name;
+    private int price;
+    private int stockQuantity;
+
+    private String author;
+    private String isbn;
+}
+```
+
+**상품 등록 컨트롤러**
+```java
+package jpaBook.jpaShop.controller;
+
+import jpaBook.jpaShop.domain.item.Book;
+import jpaBook.jpaShop.repository.ItemRepository;
+import jpaBook.jpaShop.service.ItemService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+@RequiredArgsConstructor
+public class ItemController {
+
+    private final ItemService itemService;
+
+    @GetMapping("items/new")
+    public String createForm(Model model) {
+        model.addAttribute("form", new BookForm());
+        return "items/createItemForm";
+    }
+
+    @PostMapping("items/new")
+    public String create(BookForm form) {
+        Book book = new Book();
+        book.setName(form.getName());
+        book.setPrice(form.getPrice());
+        book.setStockQuantity(form.getStockQuantity());
+        book.setAuthor(form.getAuthor());
+        book.setIsbn(form.getIsbn());
+
+        itemService.saveItem(book);
+        return "redirect:/items";
+
+    }
+}
+```
+
+**상품 등록**
+- 상품 등록 폼에서 데이터를 입력하고 Submit 버튼을 클릭하면 /items/new 를 POST 방식으로 요청
+- 상품 저장이 끝나면 상품 목록 화면( redirect:/items )으로 리다이렉트
