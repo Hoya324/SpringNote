@@ -2238,3 +2238,236 @@ public class ItemController {
 **상품 등록**
 - 상품 등록 폼에서 데이터를 입력하고 Submit 버튼을 클릭하면 /items/new 를 POST 방식으로 요청
 - 상품 저장이 끝나면 상품 목록 화면( redirect:/items )으로 리다이렉트
+```java
+    @GetMapping("/items")
+    public String itemList(Model model) {
+        List<Item> items = itemService.findItems();
+        model.addAttribute("items", items);
+        return "items/itemList";
+    }
+```
+
+- model 에 담아둔 상품 목록인 items 를 꺼내서 상품 정보를 출력
+
+> TIP💡: option 두번 누르면 muti-Select 가능
+
+### 상품 수정(수정)
+```java
+@GetMapping("items/{itemId}/edit")
+    public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
+        Book item = (Book) itemService.findOne(itemId); // 캐스팅하는게 좋진 않지만 예제를 위해 함
+
+        BookForm form = new BookForm();
+        form.setId(item.getId());
+        form.setName(item.getName());
+        form.setPrice(item.getPrice());
+        form.setStockQuantity(item.getStockQuantity());
+        form.setAuthor(item.getAuthor());
+        form.setIsbn(item.getIsbn());
+
+        model.addAttribute("form", form);
+        return "items/updateItemForm";
+    }
+
+    @PostMapping("items/{itemId}/edit")
+    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") BookForm form) {
+
+        Book book = new Book();
+        book.setId(form.getId());
+        book.setName(form.getName());
+        book.setPrice(form.getPrice());
+        book.setStockQuantity(form.getStockQuantity());
+        book.setIsbn(form.getIsbn());
+
+        itemService.saveItem(book);
+        return "redirect:/items";
+    }
+```
+
+
+> 중요사항⭐️
+>
+> /items/{itemId}/edit 에서 itemId를 악용하는 사례가 있으므로 해당 권한이 있는 사용자인지 확인하는 로직이 필요함
+
+**상품 수정과 관련된 컨트롤러 코드**
+
+
+**상품 수정 폼 이동**
+1. 수정 버튼을 선택하면 `/items/{itemId}/edit` URL을 GET 방식으로 요청
+2. 그 결과로 updateItemForm() 메서드를 실행하는데 이 메서드는 `itemService.findOne(itemId)` 를 호출해서 수정할 상품을 조회
+3. 조회결과를모델객체에담아서뷰(`items/updateItemForm`)에 전달
+
+**상품 수정 실행**
+상품 수정 폼 HTML에는 상품의 id(hidden), 상품명, 가격, 수량 정보 있음
+
+1. 상품 수정 폼에서 정보를 수정하고 Submit 버튼을 선택
+2. `/items/{itemId}/edit` URL을 POST 방식으로 요청하고 `updateItem()` 메서드를 실행
+3. 이때 컨트롤러에 파라미터로 넘어온 item 엔티티 인스턴스는 현재 준영속 상태다. 따라서 영속성 컨텍스트의 지원을 받을 수 없고 데이터를 수정해도 변경 감지 기능은 동작X
+
+
+
+## 변경 감지와 병합(merge) -> 결론: 변경 감지를 사용하자!
+
+> 참고: 정말 중요한 내용이니 꼭! 완벽하게 이해하셔야 합니다.
+
+**준영속 엔티티?**
+영속성 컨텍스트가 더는 **관리하지 않는 엔티티**를 말한다. (EntityManger로 조회하고, set을 통해 값을 변경(변경 감지 기능)이 DB에 반영되지 않음)
+(여기서는 `itemService.saveItem(book)` 에서 수정을 시도하는 `Book` 객체다. `Book` 객체는 이미 DB 에 한번 저장되어서 식별자가 존재한다. 이렇게 임의로 만들어낸 엔티티도 기존 식별자를 가지고 있으면 준영속 엔티티로 볼 수 있다.)
+
+- itemController에서 Book 객체는 다르지만 같은 Id 값(식별자)을 공유하는 Book은 수정 전 이미 한번 DB에 저장되었다.
+
+```java
+    @PostMapping("items/{itemId}/edit")
+    public String updateItem(@PathVariable String itemId, @ModelAttribute("form") BookForm form) {
+
+        Book book = new Book();
+        book.setId(form.getId());
+        book.setName(form.getName());
+        book.setPrice(form.getPrice());
+        book.setStockQuantity(form.getStockQuantity());
+        book.setIsbn(form.getIsbn());
+
+        itemService.saveItem(book);
+        return "redirect:/items";
+    }
+```
+
+**준영속 엔티티를 수정하는 2가지 방법** 
+- 변경 감지 기능 사용
+- 병합( merge ) 사용
+
+### 변경 감지 기능 사용 (더 나은 방법)
+```java
+@Transactional
+void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 상태의 엔티티
+	Item findItem = em.find(Item.class, itemParam.getId()); //같은 엔티티를 조회한다.
+	findItem.setPrice(itemParam.getPrice()); //데이터를 수정한다.
+}
+```
+
+- `ItemService` 에서 findItem은 영속 상태
+- 코드가 끝나면, Transactional에 의해 Transactional commit이 일어남
+- commit이 되면, spring은 flush를 날림(영속성 엔티티 중에 변경된 사항을 찾음, 바뀐 내용을 UPDATE 쿼리를 날려서, DB 변경)
+
+
+```java
+@Transactional
+    public void updateItem(Long itemId, Book param) {
+        Item findItem = itemRepository.findOne(itemId);
+		// 이런 식으로 set하는 것보단 findItem.change(param.getPrice(), param.getName(),param.getStockQuantity()); 이런 식으로 의미있는 메서드를 사용하는 것이 좋음 
+        findItem.setPrice(param.getPrice());
+        findItem.setName(param.getName());
+        findItem.setStockQuantity(param.getStockQuantity());
+    }
+```
+영속성 컨텍스트에서 엔티티를 다시 조회한 후에 데이터를 수정하는 방법
+트랜잭션 안에서 엔티티를 다시 조회, 변경할 값 선택 트랜잭션 커밋 시점에([flush 할 때](https://gwonbookcase.tistory.com/36)) 변경 감지(Dirty Checking) 이 동작해서 데이터베이스에 UPDATE SQL 실행
+
+**병합 사용**
+
+병합은 준영속 상태의 엔티티를 영속 상태로 변경할 때 사용하는 기능이다. 
+
+```java
+@Transactional
+	void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 상태의 엔티티
+	Item mergeItem = em.merge(itemParam);
+}
+```
+
+**병합: 기존에 있는 엔티티**
+
+<img width="476" alt="스크린샷 2023-07-02 오후 3 48 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/cae0fdcc-b1e0-42c7-8f6a-49e813a7cf71">
+
+**병합 동작 방식**
+1. `merge()`를 실행한다.
+2. 파라미터로 넘어온 준영속 엔티티의 식별자 값으로 1차 캐시에서 엔티티를 조회한다.
+	2-1. 만약 1차 캐시에 엔티티가 없으면 데이터베이스에서 엔티티를 조회하고, 1차 캐시에 저장한다.
+3. 조회한 영속 엔티티( `mergeMember` )에 member 엔티티의 값을 채워 넣는다. (member 엔티티의 모든 값을 mergeMember에 밀어 넣는다. 이때 mergeMember의 “회원1”이라는 이름이 “회원명변경”으로 바뀐다.)
+4. 영속 상태인 mergeMember를 반환한다. (기존의 member 엔티티이 영속석으로 바뀌는 것이 아니라 새로운 영속성 엔티티를 복제하는 느낌)
+
+> 참고: 책 자바 ORM 표준 JPA 프로그래밍 3.6.5
+
+**병합 시 동작 방식을 간단히 정리**
+
+1. 준영속 엔티티의 식별자 값으로 영속 엔티티를 조회한다.
+2. 영속 엔티티의 값을 준영속 엔티티의 값으로 모두 교체한다.(병합한다.)
+3. 트랜잭션 커밋 시점에 변경 감지 기능이 동작해서 데이터베이스에 UPDATE SQL이 실행
+
+> 주의: 변경 감지 기능을 사용하면 원하는 속성만 선택해서 변경할 수 있지만, 병합을 사용하면 모든 속성이 변경된다. 병합시 값이 없으면 **null로** 업데이트 할 위험도 있다. (**병합은 모든 필드를 교체한다.**) -> 원래 있던 값을 새로운 객체로 저장할 때 null로 업데이트 될 수 있는 것
+
+**상품 리포지토리의 저장 메서드 분석 ItemRepository**
+
+- save() 메서드는 식별자 값이 없으면( null ) 새로운 엔티티로 판단해서 영속화(persist)하고 식별자가 있 으면 병합(merge)
+- 지금처럼 준영속 상태인 상품 엔티티를 수정할 때는 id 값이 있으므로 병합 수행
+
+**새로운 엔티티 저장과 준영속 엔티티 병합을 편리하게 한번에 처리**
+
+상품 리포지토리에선 `save()` 메서드를 유심히 봐야 하는데, 이 메서드 하나로 저장과 수정(병합)을 다 처 리한다. 코드를 보면 식별자 값이 없으면 새로운 엔티티로 판단해서 `persist()` 로 영속화하고 만약 식별자 값이 있으면 이미 한번 영속화 되었던 엔티티로 판단해서 `merge()` 로 수정(병합)한다. 결국 여기서의 저장(save)이라는 의미는 신규 데이터를 저장하는 것뿐만 아니라 변경된 데이터의 저장이라는 의미도 포함한다. 이렇게 함으로써 이 메서드를 사용하는 클라이언트는 저장과 수정을 구분하지 않아도 되므로 클라이언트의 로직이 단순해진다.
+
+여기서 사용하는 수정(병합)은 준영속 상태의 엔티티를 수정할 때 사용한다. 영속 상태의 엔티티는 변경 감지(dirty checking)기능이 동작해서 트랜잭션을 커밋할 때 자동으로 수정되므로 별도의 수정 메서드를 호 출할 필요가 없고 그런 메서드도 없다.
+
+------------------
+
+> 참고: save() 메서드는 식별자를 자동 생성해야 정상 동작한다. 여기서 사용한 Item 엔티티의 식별자는 자동으로 생성되도록 @GeneratedValue 를 선언했다. 따라서 식별자 없이 save() 메서드를 호출하면 persist() 가 호출되면서 식별자 값이 자동으로 할당된다. 반면에 식별자를 직접 할당하도록 @Id 만 선언 했다고 가정하자. 이 경우 식별자를 직접 할당하지 않고, save() 메서드를 호출하면 식별자가 없는 상태로 persist() 를 호출한다. 그러면 식별자가 없다는 예외가 발생한다.
+
+> 참고: 실무에서는 보통 업데이트 기능이 매우 제한적이다. 그런데 병합은 모든 필드를 변경해버리고, 데이터 가 없으면 null 로 업데이트 해버린다. 병합을 사용하면서 이 문제를 해결하려면, 변경 폼 화면에서 모든 데 이터를 항상 유지해야 한다. 실무에서는 보통 변경가능한 데이터만 노출하기 때문에, 병합을 사용하는 것이 오히려 번거롭다.
+
+### 가장 좋은 해결 방법
+
+**엔티티를 변경할 때는 항상 변경 감지를 사용하세요**
+
+- 컨트롤러에서 어설프게 엔티티를 생성하지 마세요.
+- 트랜잭션이 있는 서비스 계층에 식별자( id )와 변경할 데이터를 명확하게 전달하세요.(파라미터 or dto)
+`ItemController`
+```java
+@PostMapping("items/{itemId}/edit")
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form) {
+
+        UpdateItemDto ItemDto = new UpdateItemDto(form.getName(), form.getPrice(), form.getStockQuantity());
+        
+        itemService.updateItem(itemId, ItemDto);
+
+        return "redirect:/items";
+    }
+```
+
+`ItemService`
+```java
+	/**
+	* 영속성 컨텍스트가 자동 변경
+	*/
+    @Transactional
+    public void updateItem(Long itemId, UpdateItemDto itemDto) {
+        Item findItem = itemRepository.findOne(itemId);
+        findItem.setName(itemDto.getName());
+        findItem.setPrice(itemDto.getPrice());
+        findItem.setStockQuantity(itemDto.getStockQuantity());
+    }
+```
+
+`ItemService`
+```java
+package jpaBook.jpaShop.service;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+public class UpdateItemDto {
+    private String name;
+    private int price;
+    private int stockQuantity;
+
+    public UpdateItemDto(String name, int price, int stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+    }
+}
+```
+
+- 트랜잭션이 있는 서비스 계층에서 영속 상태의 엔티티를 조회하고, 엔티티의 데이터를 직접 변경하세요.
+- 트랜잭션 커밋 시점에 변경 감지가 실행됩니다.
+
+
