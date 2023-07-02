@@ -2433,15 +2433,16 @@ void update(Item itemParam) { //itemParam: 파리미터로 넘어온 준영속 �
 
 `ItemService`
 ```java
-	/**
-	* 영속성 컨텍스트가 자동 변경
-	*/
+    /**
+     * 영속성 컨텍스트가 자동 변경
+     */
     @Transactional
     public void updateItem(Long itemId, UpdateItemDto itemDto) {
         Item findItem = itemRepository.findOne(itemId);
-        findItem.setName(itemDto.getName());
-        findItem.setPrice(itemDto.getPrice());
-        findItem.setStockQuantity(itemDto.getStockQuantity());
+        findItem.change(itemDto);
+//        findItem.setName(itemDto.getName());
+//        findItem.setPrice(itemDto.getPrice());
+//        findItem.setStockQuantity(itemDto.getStockQuantity());
     }
 ```
 
@@ -2467,7 +2468,168 @@ public class UpdateItemDto {
 }
 ```
 
+`item`
+```java
+     /**
+     * item 갱신
+     */
+    public void change(UpdateItemDto itemDto) {
+        this.name = itemDto.getName();
+        this.price = itemDto.getPrice();
+        this.stockQuantity = itemDto.getStockQuantity();
+    }
+```
+
 - 트랜잭션이 있는 서비스 계층에서 영속 상태의 엔티티를 조회하고, 엔티티의 데이터를 직접 변경하세요.
 - 트랜잭션 커밋 시점에 변경 감지가 실행됩니다.
 
+
+### 상품 주문
+
+
+**상품 주문 컨트롤러**
+```java
+package jpaBook.jpaShop.controller;
+
+import jpaBook.jpaShop.domain.Item;
+import jpaBook.jpaShop.domain.Member;
+import jpaBook.jpaShop.service.ItemService;
+import jpaBook.jpaShop.service.MemberService;
+import jpaBook.jpaShop.service.OrderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
+public class OrderController {
+
+    private final OrderService orderService;
+    private final MemberService memberService;
+    private final ItemService itemService;
+
+    @GetMapping("/order")
+    public String createForm(Model model) {
+
+        List<Member> members = memberService.findMembers();
+        List<Item> items = itemService.findItems();
+
+        model.addAttribute("members", members);
+        model.addAttribute("items", items);
+
+        return "order/orderForm";
+    }
+
+    @PostMapping("/order")
+    public String create(@RequestParam("memberId") Long memberId,
+                         @RequestParam("itemId") Long itemId,
+                         @RequestParam("count") int count) {
+
+        orderService.order(memberId, itemId, count);
+        return "redirect:/order";
+
+    }
+}
+```
+---
+```java
+    /**
+     * 주문
+     */
+    @Transactional
+    public Long order(Long memberId, Long itemId, int count) {...}
+```
+
+- 위의 코드처럼 member, item 객체를 바로 받지 않고 memberId, itemId 등을 받은 이유는 em이 관리하는(영속성 객체)를 사용하기 위해서이다.(아래의 코드 처럼 repository에서 찾아온다.
+
+```java
+// 엔티티 조회
+        Member member = memberRepository.findOne(memberId);
+        Item item = itemRepository.findOne(itemId);
+```
+
+**주문 폼 이동**
+- 메인 화면에서 상품 주문을 선택하면 `/order` 를 GET 방식으로 호출
+- `OrderController` 의 `createForm()` 메서드
+- 주문 화면에는 주문할 고객정보와 상품 정보가 필요하므로 model 객체에 담아서 뷰에 넘겨줌
+
+**주문 실행**
+- 주문할 회원과 상품 그리고 수량을 선택해서 Submit 버튼을 누르면 `/order` URL을 POST 방식으로 호출 컨트롤러의 `order()` 메서드를 실행
+- 이 메서드는 고객 식별자( `memberId` ), 주문할 상품 식별자( `itemId` ), 수량( `count` ) 정보를 받아서 주문 서비스에 주문을 요청
+- 주문이 끝나면 상품 주문 내역이 있는 /orders URL로 리다이렉트
+
+
+### 주문 목록 검색, 취소 
+
+**주문 목록 검색, 취소 컨트롤러**
+```java
+package jpaBook.jpaShop.controller;
+
+import jpaBook.jpaShop.domain.Item;
+import jpaBook.jpaShop.domain.Member;
+import jpaBook.jpaShop.domain.Order;
+import jpaBook.jpaShop.repository.OrderSearch;
+import jpaBook.jpaShop.service.ItemService;
+import jpaBook.jpaShop.service.MemberService;
+import jpaBook.jpaShop.service.OrderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
+public class OrderController {
+
+    private final OrderService orderService;
+    private final MemberService memberService;
+    private final ItemService itemService;
+
+    @GetMapping("/order")
+    public String createForm(Model model) {
+
+        List<Member> members = memberService.findMembers();
+        List<Item> items = itemService.findItems();
+
+        model.addAttribute("members", members);
+        model.addAttribute("items", items);
+
+        return "order/orderForm";
+    }
+
+    @PostMapping("/order")
+    public String create(@RequestParam("memberId") Long memberId,
+                         @RequestParam("itemId") Long itemId,
+                         @RequestParam("count") int count) {
+
+        orderService.order(memberId, itemId, count);
+        return "redirect:/order";
+    }
+
+    @GetMapping("/orders")
+    public String orderList(@ModelAttribute("orderSearch") OrderSearch orderSearch, Model model) {
+        List<Order> orders = orderService.findOrders(orderSearch);
+        model.addAttribute("orders", orders);
+
+        return "order/orderList";
+    }
+
+    @PostMapping("/orders/{orderId}/cancel")
+    public String cancelOrder(@PathVariable("orderId") Long orderId) {
+        orderService.cancelOrder(orderId);
+        return "redirect:/orders";
+    }
+}
+```
 
