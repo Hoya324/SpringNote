@@ -1,7 +1,3 @@
-
-http 헤더
-RestApi
-
 > HTTP에 대한 내용을 정리한 글입니다.
 
 # 인터넷 네트워크
@@ -1670,7 +1666,7 @@ RestApi
 
 <img width="506" alt="스크린샷 2023-07-30 오후 4 46 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/e37e8b1e-d488-413f-a4bf-76c8569493a6">
 
-**요청한 이미지가 가진 ETag와 캐시가 가진 ETag와 동일함**
+**요청한 이미지가 가진 ETag와 캐시가 가진 ETag와 동일함**<br>
 **`If-None-Match: "aaaaaaaaaa"` 이기 때문에 일치하지 않으면 성공, 일치하면 실패이다.**
 
 <img width="522" alt="스크린샷 2023-07-30 오후 4 46 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/2fde2481-a8a1-466c-9aae-ac3fd98529ab">
@@ -1685,14 +1681,137 @@ RestApi
 
 <img width="648" alt="스크린샷 2023-07-30 오후 4 51 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/c6be0965-1c44-445b-8241-5890ac3008b5">
 
+**HTTP Body를 제외하고 전송**
+
+<img width="653" alt="스크린샷 2023-07-30 오후 4 54 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/9dd668ba-555b-4f33-adf9-1edb0e612483">
+
+<img width="311" alt="스크린샷 2023-07-30 오후 4 54 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/710631c2-6e1f-4057-9f6a-347f42a319d5">
+
+### ETag, If-None-Match 정리
+- 진짜 단순하게 ETag만 서버에 보내서 같으면 유지, 다르면 다시 받기!
+- **캐시 제어 로직을 서버에서 완전히 관리**
+- 클라이언트는 단순히 이 값을 서버에 제공(클라이언트는 캐시 메커니즘을 모름) 
+- 예)
+	- 서버는 배타 오픈 기간인 3일 동안 파일이 변경되어도 ETag를 동일하게 유지 
+	- **애플리케이션 배포 주기에 맞추어 ETag 모두 갱신**
+
+### 캐시 제어 헤더
+- Cache-Control: 캐시 제어 
+- Pragma: 캐시 제어(하위 호환) 
+- Expires: 캐시 유효 기간(하위 호환)
+
+### Cache-Control (가장 중요⭐️)
+
+-> **캐시 지시어(directives)**
+
+- Cache-Control: max-age
+	- 캐시 유효 시간, 초 단위
+- Cache-Control: no-cache
+	- 데이터는 캐시해도 되지만, 항상 원(origin) 서버에 검증하고 사용
+- Cache-Control: no-store
+	- 데이터에 민감한 정보가 있으므로 저장하면 안됨 (메모리에서 사용하고 최대한 빨리 삭제)
+
+### Pragma
+
+-> **캐시 제어(하위 호환)**
+
+- Pragma: no-cache 
+- HTTP 1.0 하위 호환
 
 
+### Expires
+
+-> **캐시 만료일 지정(하위 호환)**
+
+- expires: Mon, 01 Jan 1990 00:00:00 GMT
+
+- 캐시 만료일을 정확한 날짜로 지정
+- HTTP 1.0 부터 사용
+- 지금은 더 유연한 Cache-Control: max-age 권장 
+- Cache-Control: max-age와 함께 사용하면 Expires는 무시
+
+### 검증 헤더와 조건부 요청 헤더
+
+- **검증 헤더 (Validator)**
+	- **ETag**: "v1.0", **ETag**: "asid93jkrh2l"
+	- **Last-Modified**: Thu, 04 Jun 2020 07:19:24 GMT 
+- **조건부 요청 헤더**
+	- If-Match, If-None-Match: ETag 값 사용
+	- If-Modified-Since, If-Unmodified-Since: Last-Modified 값 사용
+
+### 프록시 캐시
+
+- 원 서버(origin) 직접 접근
+-> 오래 걸림
+
+<img width="562" alt="스크린샷 2023-07-30 오후 4 57 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/46ac3fc0-7764-4bff-8301-cecbae3b1d9e">
+
+### 프록시 캐시 도입
+
+**첫 번째 요청**
+
+<img width="615" alt="스크린샷 2023-07-30 오후 4 57 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/6b609c08-0983-4b63-ad85-f65a7fd56939">
+
+<img width="607" alt="스크린샷 2023-07-30 오후 4 58 48" src="https://github.com/Hoya324/SpringNote/assets/96857599/6ea61986-85aa-4282-89c6-b4aacbad6e65">
+
+> 외국의 인기 없는 유튜브 영상을 보면 다운받는 로딩 속도가 느리지만, 한국의 인기 있는 영상을 보면 로딩 속도가 빠른 것이 프록시 캐시 서버 덕분이다.
+
+### 캐시 지시어(directives) - 기타
+- **Cache-Control: public**
+	- 응답이 public 캐시에 저장되어도 됨 
+- **Cache-Control: private**
+	- 응답이 해당 사용자만을 위한 것임, private 캐시에 저장해야 함(기본값) 
+- **Cache-Control: s-maxage**
+	- 프록시 캐시에만 적용되는 max-age 
+- **Age: 60** (HTTP 헤더)
+	- 오리진 서버에서 응답 후 프록시 캐시 내에 머문 시간(초)
+
+### 캐시 무효화
+
+### Cache-Control
+
+-> **확실한 캐시 무효화 응답(확실하게 캐시하지 않도록 만들어주는 것)**
+
+- **Cache-Control: no-cache, no-store, must-revalidate**
+- **Pragma: no-cache**
+	- HTTP 1.0 하위 호환
+
+> Pragma는 과거의 HTTP까지 호환하기 위해 사용한 것.
 
 
+### Cache-Control 정리
 
+-> **캐시 지시어(directives) - 확실한 캐시 무효화**
 
+- **Cache-Control: no-cache**
+	- 데이터는 캐시해도 되지만, 항상 원 서버에 검증하고 사용(이름에 주의!) 
+- **Cache-Control: no-store**
+	- 데이터에 민감한 정보가 있으므로 저장하면 안됨(메모리에서 사용하고 최대한 빨리 삭제)
+- **Cache-Control: must-revalidate**
+	- 캐시 만료후 최초 조회시 **원 서버에 검증해야함**
+	- 원 서버 접근 실패시 반드시 오류가 발생해야함 - 504(Gateway Timeout)
+	- must-revalidate는 캐시 유효 시간이라면 캐시를 사용함
+- **Pragma: no-cache**
+	- HTTP 1.0 하위 호환
 
+### no-cache vs must-revalidate 
 
+**no-cache 기본 동작**
 
+<img width="624" alt="스크린샷 2023-07-30 오후 5 02 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/ae7804a1-09ec-438c-b094-c4872bef1d7f">
 
+- 만약, 순간적으로 네트워크가 단절되어 원 서버에 접근이 불가능하다면?
+**Error or 200 OK (오류 보다는 오래된 데이터라도 보여주자)**
 
+<img width="637" alt="스크린샷 2023-07-30 오후 5 02 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/724aa542-ee8e-4c97-9c9c-743824785a71">
+
+**must-revalidate는 문제가 생기면 오류가 발생하도록 함.**
+
+<img width="622" alt="스크린샷 2023-07-30 오후 5 03 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/c301c258-f55b-447a-8460-a9a08c7e9b78">
+
+### [Internet Engineering Task Force (IETF) - HTTP 추가적인 공부](https://datatracker.ietf.org/doc/html/rfc7230)
+
+## Reference
+
+- [모든 개발자를 위한 HTTP 웹 기본 지식/김영한](https://www.inflearn.com/course/http-%EC%9B%B9-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC/dashboard)
+- [REST API란, HTTP Method](https://velog.io/@ellyheetov/REST-API)
