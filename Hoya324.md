@@ -1495,3 +1495,64 @@ RestApi
 
 [캐시와 쿠키의 차이](https://zorba91.tistory.com/163)
 
+
+### 캐시
+
+### 캐시 기본 동작- 캐시가 없을 때
+**첫 번째 요청**
+
+<img width="595" alt="스크린샷 2023-07-30 오후 3 04 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/7b1eb691-1e06-4d3a-9633-d4168c5dda64">
+
+<img width="593" alt="스크린샷 2023-07-30 오후 3 05 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/e13f441e-f9d2-4655-80a6-32779f8548eb">
+
+**두 번째 요청**
+
+<img width="594" alt="스크린샷 2023-07-30 오후 3 05 47" src="https://github.com/Hoya324/SpringNote/assets/96857599/1e35f55c-1923-40e0-8ea2-5e4779f07c13">
+
+<img width="587" alt="스크린샷 2023-07-30 오후 3 06 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/ba226bb7-422d-4044-8b06-01257035b5ff">
+
+**캐시가 없을 때 특징**
+- 데이터가 변경되지 않아도 계속 네트워크를 통해서 데이터를 다운로드 받아야 한다. 
+- 인터넷 네트워크는 매우 느리고 비싸다.
+- 브라우저 로딩 속도가 느리다.
+- 느린 사용자 경험
+
+### 캐시 적용
+
+**첫 번째 요청 - 캐시의 생명 주기를 설정하고 데이터를 저장해둠**
+
+<img width="603" alt="스크린샷 2023-07-30 오후 3 09 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/8b4ff496-0838-4118-82f6-efd808946f8f">
+
+<img width="598" alt="스크린샷 2023-07-30 오후 3 10 05" src="https://github.com/Hoya324/SpringNote/assets/96857599/fa4190e1-e695-4772-aeed-e7e761525b0f">
+
+**두 번째 요청 - 브라우저 캐시에 저장되어있는 데이터는 바로 응답함.**
+
+<img width="521" alt="스크린샷 2023-07-30 오후 3 10 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/6c15ac21-6911-4ef0-b490-cec5463e49fa">
+
+<img width="509" alt="스크린샷 2023-07-30 오후 3 11 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/72bd784b-ef8b-4d68-96f3-48432f1c29db">
+
+**캐시를 적용했을 때 특징**
+- 캐시 덕분에 캐시 가능 시간동안 네트워크를 사용하지 않아도 된다. 
+- 비싼 네트워크 사용량을 줄일 수 있다.
+- 브라우저 로딩 속도가 매우 빠르다.
+- 빠른 사용자 경험
+ 
+**세 번째 요청 - 캐시 시간 초과**
+
+<img width="515" alt="스크린샷 2023-07-30 오후 3 14 55" src="https://github.com/Hoya324/SpringNote/assets/96857599/393bfebc-2e82-4306-9ff0-de2ea106d2d3">
+
+<img width="610" alt="스크린샷 2023-07-30 오후 3 15 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/a2d41e4b-b69b-4d21-98a0-6d45d50be8f5">
+
+<img width="602" alt="스크린샷 2023-07-30 오후 3 16 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/1e4b36c2-3607-4be9-a9b8-6a4f2f91b441">
+
+**캐시 시간 초과**
+- 캐시 유효 시간이 초과하면, 서버를 통해 데이터를 다시 조회하고, 캐시를 갱신한다. 
+- 이때 다시 네트워크 다운로드가 발생한다.
+
+> 캐시 유효 시간이 만료된 데이터가 다시 들어올 때, 같은 데이터더라도 다시 다운받게 된다. 시간,
+>
+> 용량이 아깝다.
+>
+> 이걸 해결하기 위한 매커니즘 -> 검증 헤더와 조건부 요청
+
+
