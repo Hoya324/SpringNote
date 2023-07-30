@@ -1555,4 +1555,144 @@ RestApi
 >
 > 이걸 해결하기 위한 매커니즘 -> 검증 헤더와 조건부 요청
 
+### 검증 헤더와 조건부 요청1
+
+**캐시 시간 초과**
+
+- 캐시 유효 시간이 초과해서 서버에 다시 요청하면 다음 두 가지 상황이 나타난다.
+  1. 서버에서 기존 데이터를 변경함
+  2. 서버에서 기존 데이터를 변경하지 않음
+
+
+### 검증 헤더 추가
+- 최종 수정일 확인/UTC로 적어야함
+
+**첫 번째 요청**
+
+<img width="632" alt="스크린샷 2023-07-30 오후 4 29 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/d54dcbb3-0feb-456b-9133-0a2b5eab8531">
+
+**캐시 유효시간 안에는 그대로 캐시 데이터 사용**
+
+<img width="619" alt="스크린샷 2023-07-30 오후 4 30 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/199d3d3f-d6ab-4a04-b705-8b9cbf8d11ed">
+
+**두 번째 요청 - 캐시 시간 초과**
+
+<img width="516" alt="스크린샷 2023-07-30 오후 4 31 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/1cc9ba89-f581-4d87-bee5-6702417d6f6f">
+
+<img width="518" alt="스크린샷 2023-07-30 오후 4 31 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/7bde21b8-e27b-4115-8d2f-06dff509c086">
+
+**데이터의 최종 수정일을 확인함.**
+
+<img width="507" alt="스크린샷 2023-07-30 오후 4 36 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/d6e41c5d-8284-4c0e-908d-2cba4bf0b2a0">
+
+<img width="523" alt="스크린샷 2023-07-30 오후 4 37 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/6b3659eb-5ba0-4632-8d58-91649c11fe40">
+
+**304 Not Modified를 내보낸다.**
+- 단, HTTP Body가 없이 내보낸다.
+
+<img width="641" alt="스크린샷 2023-07-30 오후 4 37 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/d7486fb0-6388-4bce-9247-7688a5ccf950">
+
+**응답 결과를 재사용하고, 헤더 데이터를 갱신한다.**
+
+<img width="652" alt="스크린샷 2023-07-30 오후 4 38 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/5e3a057b-aaaa-4972-8cab-75028de77473">
+
+**정리**
+- 캐시 유효 시간이 초과해도, 서버의 데이터가 갱신되지 않으면
+- 304 Not Modified + 헤더 메타 정보만 응답(바디X)
+- 클라이언트는 서버가 보낸 응답 헤더 정보로 캐시의 메타 정보를 갱신 
+- 클라이언트는 캐시에 저장되어 있는 데이터 재활용
+- 결과적으로 네트워크 다운로드가 발생하지만 용량이 적은 헤더 정보만 다운로드 
+- 매우 실용적인 해결책
+
+**캐시에서 불러온 데이터인지 확인**
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/3f6145d9-5274-4903-91b0-44e44d346370)
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/3a0d3f2c-7f5f-40fe-ab9a-a7d126869808)
+
+- 이미지를 더블클릭하고, 새로 고침해보면 304 Not Modified가 뜨게 되고,
+- if-modified-since: Tue, 03 Mar 2020 20:15:00 GMT라는 조건부를 확인할 수 있다.
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/1a9fce1d-36f7-42e9-9ce0-774dac6410b1)
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/2bef1469-6a31-4ae1-9a7f-8d10b7de13f7)
+
+### 검증 헤더와 조건부 요청2
+
+- **검증 헤더**
+	- 캐시 데이터와 서버 데이터가 같은지 검증하는 데이터
+	- Last-Modified , ETag
+- **조건부 요청 헤더**
+	- 검증 헤더로 조건에 따른 분기 
+	- If-Modified-Since: Last-Modified 사용 
+	- If-None-Match: ETag 사용
+	- 조건이 만족하면 200 OK
+	- 조건이 만족하지 않으면 304 Not Modified
+
+**예시**
+- If-Modified-Since: 이후에 데이터가 수정되었으면?
+	- **데이터 미변경 예시**
+		- 캐시: 2020년 11월 10일 10:00:00 vs 서버: 2020년 11월 10일 10:00:00 
+		- **304 Not Modified**, 헤더 데이터만 전송(BODY 미포함)
+		- 전송 용량 0.1M (헤더 0.1M, 바디 1.0M)
+	- **데이터 변경 예시**
+		- 캐시: 2020년 11월 10일 10:00:00 vs 서버: 2020년 11월 10일 11:00:00 
+		- **200 OK**, 모든 데이터 전송(BODY 포함)
+		- 전송 용량 1.1M (헤더 0.1M, 바디 1.0M)
+
+**Last-Modified, If-Modified-Since 단점**
+
+- 1초 미만(0.x초) 단위로 캐시 조정이 불가능
+- 날짜 기반의 로직 사용
+- 데이터를 수정해서 날짜가 다르지만, 같은 데이터를 수정해서 데이터 결과가 똑같은 경우
+- 서버에서 별도의 캐시 로직을 관리하고 싶은 경우
+	- 예) 스페이스나 주석처럼 크게 영향이 없는 변경에서 캐시를 유지하고 싶은 경우
+
+> ETag 사용를 사용해서 단점을 해결해보자
+
+### ETag, If-None-Match
+
+- ETag(Entity Tag)
+- 캐시용 데이터에 임의의 고유한 버전 이름을 달아둠
+	- 예) ETag: "v1.0", ETag: "a2jiodwjekjl3"
+- 데이터가 변경되면 이 이름을 바꾸어서 변경함(Hash를 다시 생성)
+	- 예) ETag: "aaaaa" -> ETag: "bbbbb"
+- 진짜 단순하게 ETag만 보내서 같으면 유지, 다르면 다시 받기!
+
+### 검증 헤더 추가
+**첫 번째 요청 -> ETag 저장**
+
+<img width="624" alt="스크린샷 2023-07-30 오후 4 45 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/e6a26dd7-e977-4717-a4b7-69570493174a">
+
+<img width="610" alt="스크린샷 2023-07-30 오후 4 45 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/0fb0f946-8db0-4801-949b-d3e52e234fc8">
+
+**두 번째 요청 - 캐시 시간 초과**
+
+<img width="506" alt="스크린샷 2023-07-30 오후 4 46 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/e37e8b1e-d488-413f-a4bf-76c8569493a6">
+
+**요청한 이미지가 가진 ETag와 캐시가 가진 ETag와 동일함**
+**`If-None-Match: "aaaaaaaaaa"` 이기 때문에 일치하지 않으면 성공, 일치하면 실패이다.**
+
+<img width="522" alt="스크린샷 2023-07-30 오후 4 46 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/2fde2481-a8a1-466c-9aae-ac3fd98529ab">
+
+<img width="513" alt="스크린샷 2023-07-30 오후 4 47 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/8c4964d1-baa6-43c0-be5b-699c0b443353">
+
+**데이터가 수정되지 않음**
+
+<img width="509" alt="스크린샷 2023-07-30 오후 4 47 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/b8479485-c62f-4548-bf98-215f6682333a">
+
+**실패(때문에 304 Not Modified가 뜸)**
+
+<img width="648" alt="스크린샷 2023-07-30 오후 4 51 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/c6be0965-1c44-445b-8241-5890ac3008b5">
+
+
+
+
+
+
+
+
+
+
+
 
