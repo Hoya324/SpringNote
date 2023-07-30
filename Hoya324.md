@@ -1,8 +1,4 @@
-Http에 대해 학습한다.
-인터넷과 네트워크
-http
-http 메서드
-http 상태코드
+
 http 헤더
 RestApi
 
@@ -789,7 +785,713 @@ RestApi
 	- 동사를 직접 사용
 	- 예) /members/{id}/delete
 
+## HTTP 상태코드
+
+### HTTP 상태코드 소개
+ 
+**상태 코드 - 클라이언트가 보낸 요청의 처리 상태를 응답에서 알려주는 기능**
+- **1xx (Informational)**: 요청이 수신되어 처리중
+- **2xx (Successful)**: 요청 정상 처리
+- **3xx (Redirection)**: 요청을 완료하려면 추가 행동이 필요
+- **4xx (Client Error)**: 클라이언트 오류, 잘못된 문법등으로 서버가 요청을 수행할 수 없음 
+- **5xx (Server Error)**: 서버 오류, 서버가 정상 요청을 처리하지 못함
+
+**만약 모르는 상태 코드가 나타나면?**
+
+- 클라이언트가 인식할 수 없는 상태코드를 서버가 반환하면? 
+- 클라이언트는 상위 상태코드로 해석해서 처리
+- 미래에 새로운 상태 코드가 추가되어도 클라이언트를 변경하지 않아도 됨 
+- 예)
+	- 299 ??? -> 2xx (Successful) 
+	- 451 ??? -> 4xx (Client Error) 
+	- 599 ??? -> 5xx (Server Error)
+
+### 1xx (Informational)
+-> 요청이 수신되어 처리중
+
+- 거의 사용하지 않으므로 생략
+
+### 2xx - 성공
+-> 클라이언트의 요청을 성공적으로 처리
+
+- 프로젝트를 진행할 때, 200 또는 201까지만 정해두고 사용하느 경우가 많다. 
+- 각 팀에서 범위를 정해서 사용하는 것이 좋다. (너무 양이 많기 때문)
+
+**200 OK - 요청성공**
+
+<img width="562" alt="스크린샷 2023-07-30 오후 1 21 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/1ef35af7-31a0-4bce-9df5-b56330751a66">
+
+**201 Created**
+- POST 요청이므로 서버에서 자원을 생성하고, 자원에 대한 URI도 관리
+
+<img width="641" alt="스크린샷 2023-07-30 오후 1 22 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/951110d4-fcf1-4e9d-82fb-346e6aa52f37">
+
+**202 Accepted**
+-> 요청이 접수되었으나 처리가 완료되지 않았음
+- 배치 처리 같은 곳에서 사용
+- 예) 요청 접수 후 1시간 뒤에 배치 프로세스가 요청을 처리함
+
+**204 No Content**
+-> 서버가 요청을 성공적으로 수행했지만, 응답 페이로드 본문에 보낼 데이터가 없음
+
+- 예) 웹 문서 편집기에서 save 버튼
+- save 버튼의 결과로 아무 내용이 없어도 된다.
+- save 버튼을 눌러도 같은 화면을 유지해야 한다.
+- 결과 내용이 없어도 204 메시지(2xx)만으로 성공을 인식할 수 있다.
+
+### 3xx - 리다이렉션
+-> 요청을 완료하기 위해 유저 에이전트(웹 브라우저)의 추가 조치 필요
+
+- 300 Multiple Choices 
+- 301 Moved Permanently 
+- 302 Found
+- 303 See Other
+- 304 Not Modified
+- 307 Temporary Redirect 
+- 308 Permanent Redirect
+
+**리다이렉션 이해**
+- 웹 브라우저는 3xx 응답의 결과에 Location 헤더가 있으면, Location 위치로 자동 이동 (리다이렉트)
+
+**자동 리다이렉트 흐름**
+
+<img width="559" alt="스크린샷 2023-07-30 오후 1 25 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/a4298d99-5753-4fa1-9ecb-437a59454c3c">
+
+- 기존에 /event를 사용하다가 경로를 /new-event로 바꿈
+-> 문제점: 기존의 경로를 저장해두고 사용하던 클라이언트들은 /event를 타고 들어옴
+- HTTP/1.1 301 Moved Permanently Location: /new-event 라고 응답이 들어옴
+- Location 경로로 자동으로 URL이 변경돼서 서버에 다시 /new-event 페이지로 요청함
+
+**종류**
+- **영구 리다이렉션** - 특정 리소스의 URI가 영구적으로 이동
+	- 예) /members -> /users
+	- 예) /event -> /new-event 
+- **일시 리다이렉션** - 일시적인 변경
+	- 주문 완료 후 주문 내역 화면으로 이동
+	- **PRG: Post/Redirect/Get (굉장히 자주 사용하는 패턴)**
+- **특수 리다이렉션**
+	- 결과 대신 캐시를 사용
+
+### 영구 리다이렉션 -> 301, 308
+- 리소스의 URI가 영구적으로 이동
+- 원래의 URL를 사용X, 검색 엔진 등에서도 변경 인지
+- **301 Moved Permanently (실무에서 자주 사용함)**
+	- **리다이렉트시 요청 메서드가 GET으로 변하고, 본문이 제거될 수 있음(MAY)**
+
+<img width="468" alt="스크린샷 2023-07-30 오후 1 32 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/d4f4efb4-9e2f-408d-ab72-04ba05cc6559">
+
+- **308 Permanent Redirect**
+	- 301과 기능은 같음
+	- **리다이렉트 시 요청 메서드와 본문 유지(처음 POST를 보내면 리다이렉트도 POST 유지)**
+
+<img width="456" alt="스크린샷 2023-07-30 오후 1 33 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/9b3ba024-e337-47f9-8ade-4433ead674dd">
+
+### 일시적인 리다이렉션 -> 302, 307, 303
+ 
+- 리소스의 URI가 일시적으로 변경
+- 따라서 검색 엔진 등에서 URL을 변경하면 안됨
+- **302 Found**
+	- **리다이렉트시 요청 메서드가 GET으로 변하고, 본문이 제거될 수 있음(MAY)**
+- **307 Temporary Redirect**
+	- 302와 기능은 같음
+	- **리다이렉트시 요청 메서드와 본문 유지(요청 메서드를 변경하면 안된다. MUST NOT)**
+- **303 See Other**
+	- 302와 기능은 같음
+	- **리다이렉트시 요청 메서드가 GET으로 변경**
+
+### PRG: Post/Redirect/Get
+-> 일시적인 리다이렉션 - 예시
+
+**PRG 사용전**
+- POST로 주문후에 웹 브라우저를 새로고침하면? 
+- 새로고침은 다시 요청
+- 중복 주문이 될 수 있다.
+
+<img width="549" alt="스크린샷 2023-07-30 오후 1 36 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/1b1430fb-c42c-47f3-aaa9-7abd432e0009">
+
+> 서버 차원에서 중복되 주문번호를 제거하는 것이 맞지만, 클라이언트 차원에서도 한번 방지하는 것도 좋다.
+
+**PRG 사용**
+- POST로 주문후에 새로 고침으로 인한 중복 주문 방지 
+- POST로 주문후에 주문 결과 화면을 GET 메서드로 리다이렉트 
+- 새로고침해도 결과 화면을 GET으로 조회
+- 중복 주문 대신에 결과 화면만 GET으로 다시 요청
+
+**리다이렉션 302 Found 또는 303 See Other를 통해 메서드를 Get으로 변경**
+
+<img width="551" alt="스크린샷 2023-07-30 오후 1 37 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/11c4e9f2-2582-4b4c-8127-bf445700e6b3">
+
+- PRG 이후 리다이렉트
+	- URL이 이미 POST -> GET으로 리다이렉트 됨
+	- 새로 고침 해도 GET으로 결과 화면만 조회
+
+### 정리
+> 그래서 뭘 써야 하나요?
+
+**302, 307, 303**
+
+- **정리**
+	- 302 Found -> GET으로 변할 수 있음
+	- 307 Temporary Redirect -> 메서드가 변하면 안됨 
+	- 303 See Other -> 메서드가 GET으로 변경
+- **역사**
+	- 처음 302 스펙의 의도는 HTTP 메서드를 유지하는 것
+	- 그런데 웹 브라우저들이 대부분 GET으로 바꾸어버림(일부는 다르게 동작)
+	- 그래서 모호한 302를 대신하는 명확한 307, 303이 등장함(301 대응으로 308도 등장)
+- **현실**
+	- 307, 303을 권장하지만 현실적으로 이미 많은 애플리케이션 라이브러리들이 302를 기본값으로 사용 
+	- 자동 리다이렉션시에 GET으로 변해도 되면 그냥 302를 사용해도 큰 문제 없음
+
+### 기타 리다이렉션 -> 300, 304
+
+- 300 Multiple Choices: 안쓴다. 
+- 304 Not Modified
+	- 캐시를 목적으로 사용
+	- 클라이언트에게 리소스가 수정되지 않았음을 알려준다. 따라서 클라이언트는 로컬PC에 저장된 캐시를 재사용한다. (캐시로 리다이렉트 한다.)
+	- 304 응답은 응답에 메시지 바디를 포함하면 안된다. (로컬 캐시를 사용해야 하므로) 
+	- 조건부 GET, HEAD 요청시 사용
+
+### 4xx (Client Error)
+-> 클라이언트 오류
+
+- 클라이언트의 요청에 잘못된 문법등으로 서버가 요청을 수행할 수 없음
+- **오류의 원인이 클라이언트에 있음**
+- ⭐️**중요! 클라이언트가 이미 잘못된 요청, 데이터를 보내고 있기 때문에, 똑같은 재시도가 실패함**
+
+> 4xx과 5xx의 가장 큰 차이: 4xx는 클라이언트에 오류 원인이 있으므로 재시도가 실패하지만,
+>
+> 5xx은 서버에 오류 원인이 있으므로 서버의 데이터가 복구된다면 같은 클라이언트의 요청에도 성공할 가능성이 있음
+
+**400 Bad Request**
+-> **클라이언트가 잘못된 요청을 해서 서버가 요청을 처리할 수 없음**
+
+- 요청 구문, 메시지 등등 오류
+- 클라이언트는 요청 내용을 다시 검토하고, 보내야함
+- 예) 요청 파라미터가 잘못되거나, API 스펙이 맞지 않을 때
+
+=> 백엔드 개발자가 막아야함
+
+**401 Unauthorized**
+-> **클라이언트가 해당 리소스에 대한 인증이 필요함**
+
+- 인증(Authentication) 되지 않음
+- 401 오류 발생시 응답에 WWW-Authenticate 헤더와 함께 인증 방법을 설명 
+- 참고
+	- 인증(Authentication): 본인이 누구인지 확인, (로그인)
+	- 인가(Authorization): 권한부여 (ADMIN 권한처럼 특정 리소스에 접근할 수 있는 권한, 인증이 있어야 인가가 있음)
+	- 오류 메시지가 Unauthorized 이지만 인증 되지 않음 (이름이 아쉬움)
+
+**403 Forbidden**
+-> **서버가 요청을 이해했지만 승인을 거부함**
+
+- 주로 인증 자격 증명은 있지만, 접근 권한이 불충분한 경우
+- 예) 어드민 등급이 아닌 사용자가 로그인은 했지만, 어드민 등급의 리소스에 접근하는 경우
+
+**404 Not Found**
+-> **요청 리소스를 찾을 수 없음**
+
+- 요청 리소스가 서버에 없음
+- 또는 클라이언트가 권한이 부족한 리소스에 접근할 때 해당 리소스를 숨기고 싶을 때
+
+### 5xx (Server Error)
+-> 서버 오류
+
+- 서버 문제로 오류 발생
+- 서버에 문제가 있기 때문에 재시도 하면 성공할 수도 있음(복구가 되거나 등등)
+
+**500 Internal Server Error**
+-> 서버 문제로 오류 발생, 애매하면 500 오류
+
+- 서버 내부 문제로 오류 발생 
+- 애매하면 500 오류
+
+**503 Service Unavailable**
+-> 서비스 이용 불가
+- 서버가 일시적인 과부하 또는 예정된 작업으로 잠시 요청을 처리할 수 없음 
+- Retry-After 헤더 필드로 얼마뒤에 복구되는지 보낼 수도 있음
+
+> 5xx는 정말 서버에 문제가 생겼을 때만 사용해야함. (로직에 문제가 있거나, 쿼리에 문제가 있거나, 데이터베이스에 문제가 생기는 경우 등등)
 
 
+## HTTP 헤더
 
+> 일반 헤더
+
+### HTTP 헤더 개요
+- header-field = field-name ":" OWS field-value OWS (OWS: 띄어쓰기 허용)
+- field-name은 대소문자 구문 없음
+
+<img width="552" alt="스크린샷 2023-07-29 오후 5 18 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/e030a0dd-477c-412c-8c86-533bc39f8361">
+
+**용도**
+- HTTP 전송에 필요한 모든 부가정보
+- 예) 메시지 바디의 내용, 메시지 바디의 크기, 압축, 인증, 요청 클라이언트(브라우저) 정보, 서버 애플리케이션 정보, 캐시 관리 정보...
+- 표준 헤더가 너무 많음
+  - [List_of_HTTP_header_fields](https://en.wikipedia.org/wiki/List_of_HTTP_header_fields)
+- 필요시 임의의 헤더 추가 가능
+  - helloworld: hihi
+
+### RFC2616(과거)
+
+**HTTP 헤더 - 분류**
+
+<img width="371" alt="스크린샷 2023-07-30 오후 1 52 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/73300359-8f16-44de-8b17-c49f346a5584">
+
+- 헤더 분류
+	- **General 헤더**: 메시지 전체에 적용되는 정보, 예) Connection: close
+	- **Request 헤더**: 요청 정보, 예) User-Agent: Mozilla/5.0 (Macintosh; ..)
+	- **Response 헤더**: 응답 정보, 예) Server: Apache
+	- **Entity 헤더**: 엔티티 바디 정보, 예) Content-Type: text/html, Content-Length: 3423
+
+**HTTP Body - message body**
+
+<img width="348" alt="스크린샷 2023-07-30 오후 1 53 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/42e5caf8-878b-48dd-89f9-9e24b53f8124">
+
+- 메시지 본문(message body)은 엔티티 본문(entity body)을 전달하는데 사용
+- 엔티티 본문은 요청이나 응답에서 전달할 실제 데이터
+- **엔티티 헤더는 엔티티 본문**의 데이터를 해석할 수 있는 정보 제공
+	- 데이터 유형(html, json), 데이터 길이, 압축 정보 등등
+
+### HTTP 표준 변화
+- 1999년 RFC2616 -> **폐기됨**
+- 2014년 RFC7230~7235 등장
+
+**RFC723x 변화**
+- 엔티티(Entity) -> 표현(Representation)
+- Representation = representation Metadata + Representation Data
+- 표현 = 표현 메타데이터 + 표현 데이터
+
+### RFC7230(최신)
+
+**HTTP BODY - message body**
+
+<img width="297" alt="스크린샷 2023-07-30 오후 1 59 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/e2d979fb-2e02-48ee-a743-ed08c12079fc">
+
+- 메시지 본문(message body)을 통해 표현 데이터 전달
+- 메시지 본문 = 페이로드(payload)
+- **표현**은 요청이나 응답에서 전달할 실제 데이터
+- **표현 헤더는 표현 데이터를 해석할 수 있는 정보 제공**
+	- 데이터 유형(html, json), 데이터 길이, 압축 정보 등등
+
+> 참고: 표현 헤더는 표현 메타데이터와, 페이로드 메시지를 구분해야 하지만, 여기서는 생략
+
+### 표현
+
+<img width="293" alt="스크린샷 2023-07-30 오후 2 03 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/b840b2d6-d904-4c34-bf71-f72116276c50">
+
+- Content-Type: 표현 데이터의 형식
+- Content-Encoding: 표현 데이터의 압축 방식
+- Content-Language: 표현 데이터의 자연 언어
+- Content-Length: 표현 데이터의 길이
+
+- 표현 헤더는 전송, 응답 둘다 사용
+
+### Content-Type
+**표현 데이터의 형식 설명**
+- application/json은 기본이 UTF-8임
+
+<img width="250" alt="스크린샷 2023-07-30 오후 2 04 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/80799316-b800-464c-b459-2b2b97a26c63">
+
+- 미디어 타입, 문자 인코딩
+- 예)
+	- text/html; charset=utf-8
+	- application/json
+  - image/png
+
+### Content-Encoding (압축할 때)
+**표현 데이터 인코딩**
+
+<img width="251" alt="스크린샷 2023-07-30 오후 2 06 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/d597acc5-4b18-447a-b74a-87fa686a5fba">
+
+- 표현 데이터를 압축하기 위해 사용
+- 데이터를 전달하는 곳에서 압축 후 인코딩 헤더 추가
+- 데이터를 읽는 쪽에서 인코딩 헤더의 정보로 압축 해제
+- 예)
+	- gizp
+	- deflate
+	- identity
+
+### Content-Language (표현 데이터의 자연어 표시)
+**표현 데이터의 자연 언어**
+
+<img width="217" alt="스크린샷 2023-07-30 오후 2 07 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/84318f35-4d43-4f95-b2b2-d4362e5d8762">
+
+- 표현 데이터의 자연 언어를 표현
+- 예)
+	- ko
+	- en
+	- en-US
+
+### Content-Length
+**표현 데이터의 길이**
+
+<img width="218" alt="스크린샷 2023-07-30 오후 2 08 36" src="https://github.com/Hoya324/SpringNote/assets/96857599/c5e20700-24c3-475e-a70a-57fa6509d525">
+
+- 바이트 단위
+- Transfer-Encoding(전송 코딩)을 사용하면 Content-Length를 사용하면 안됨
+
+### 콘텐츠 협상 (콘텐츠 네고시에이션)
+-> 클라이언트가 (우선순위에 맞게) 선호하는 표현을 서버에게 요청
+
+- Accept: 클라이언트가 선호하는 미디어 타입 전달 
+- Accept-Charset: 클라이언트가 선호하는 문자 인코딩 
+- Accept-Encoding: 클라이언트가 선호하는 압축 인코딩 
+- Accept-Language: 클라이언트가 선호하는 자연 언어
+
+> 협상 헤더는 요청시에만 사용
+
+### Accept-Language
+
+**Accept-Language 적용 전**
+
+-> **클라이언트가 한국인지 아닌지 정보가 존재하지 않음**
+
+<img width="447" alt="스크린샷 2023-07-30 오후 2 12 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/22ffdc1f-db81-48ad-88e5-10987ae71195">
+
+**Accept-Language 적용 후**
+
+-> **Accept-Language가 있으면 선호하는 언어가 한국어인 것을 HTTP Header로 처리할 수 있음.**
+
+<img width="443" alt="스크린샷 2023-07-30 오후 2 12 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/9afac02a-fe09-4b7a-954b-b790b47dfac3">
+
+**Accept-Language 복잡한 예시**
+
+-> 복잡한 예시: 한국어를 희망하는 클라이언트가 독일어와 영어를 지원하는 서버에서 기본 설정인 독일어보단 영어를 희망함.
+
+<img width="432" alt="스크린샷 2023-07-30 오후 2 14 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/75068068-f1aa-4f39-8ffb-987d6dfdc44f">
+
+**협상과 우선순위1** 
+-> Quality Values(q)
+
+<img width="437" alt="스크린샷 2023-07-30 오후 2 18 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/60bd0e14-19cc-4059-8731-979b2988e32a">
+
+- Quality Values(q) 값 사용
+- 0~1, **클수록 높은 우선순위**
+- 생략하면 1
+- Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+	- 1. ko-KR;q=1 (q생략)
+	- 2. ko;q=0.9
+	- 3. en-US;q=0.8
+	- 4. 4. en:q=0.7
+
+**협상과 우선순위2** 
+
+-> Quality Values(q)
+
+<img width="322" alt="스크린샷 2023-07-30 오후 2 20 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/08045322-dcd3-4df5-a441-5aea2ab28c33">
+
+- 구체적인 것이 우선한다.
+- Accept: text/*, text/plain, text/plain;format=flowed, */*
+	1. text/plain;format=flowed
+	2. text/plain
+	3. text/*
+	4. */*
+
+**협상과 우선순위3** 
+
+-> Quality Values(q)
+
+- 구체적인 것을 기준으로 미디어 타입을 맞춘다.
+- Accept: text/*;q=0.3, text/html;q=0.7, text/html;level=1,  text/html;level=2;q=0.4, */*;q=0.5
+
+<img width="154" alt="스크린샷 2023-07-30 오후 2 21 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/d51f9efb-0bd6-4208-8604-3bbbbcac3a07">
+
+### 전송 방식
+- Transfer-Encoding
+- Range, Content-Range
+
+### 전송 방식 설명
+- 단순 전송
+- 압축 전송
+- 분할 전송
+- 범위 전송
+
+
+### 단순 전송 Content-Length**
+
+-> **컨텐츠에 대한 길이를 알 때 사용**
+
+<img width="517" alt="스크린샷 2023-07-30 오후 2 23 35" src="https://github.com/Hoya324/SpringNote/assets/96857599/b920c398-30f1-453e-9afc-729ce16e3b54">
+
+### 압축 전송 Content-Encoding
+
+-> **Content-Encoding을 꼭 입력해야함**
+
+<img width="512" alt="스크린샷 2023-07-30 오후 2 24 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/cc26dada-4bc0-4046-b039-b85f7bc892de">
+
+### 분할 전송 Transfer-Encoding
+
+-> **Content-Length를 보내면 안 됨. (예상이 되지 않음, 청크들마다 길이가 나옴.)**
+
+<img width="521" alt="스크린샷 2023-07-30 오후 2 26 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/a2e27d8a-a702-4910-9e52-c6767322632a">
+
+### 범위 전송 Range, Content-Range
+
+-> **중간에 끊기면 처음부터 다시 받지 않도록 범위를 설정할 수 있음.**
+
+<img width="483" alt="스크린샷 2023-07-30 오후 2 27 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/78199b7f-df2d-4a2e-a228-d4a4841f1f88">
+
+### 일반 전송
+- From: 유저 에이전트의 이메일 정보
+- Referer: 이전 웹 페이지 주소
+- User-Agent: 유저 에이전트 애플리케이션 정보
+- Server: 요청을 처리하는 오리진 서버의 소프트웨어 정보 
+- Date: 메시지가 생성된 날짜
+
+### From
+
+-> **유저 에이전트의 이메일 정보**
+
+- 일반적으로 잘 사용되지 않음 
+- 검색 엔진 같은 곳에서, 주로 사용 
+- 요청에서 사용
+
+### Referer
+-> **이전 웹 페이지 주소**
+- 현재 요청된 페이지의 이전 웹 페이지 주소
+- A -> B로 이동하는 경우 B를 요청할 때 Referer: A 를 포함해서 요청 
+- Referer를 사용해서 유입 경로 분석 가능
+- 요청에서 사용
+
+> 참고: referer는 단어 referrer의 오타
+
+**이전의 웹 페이지를 알려줌.**
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/4b021585-d233-4f00-81fe-b539da8228df)
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/66a159c7-2637-42f6-abfc-d18cc461bd8e)
+
+### User-Agent
+
+-> **유저 에이전트 애플리케이션 정보**
+
+- user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/ 537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36
+- 클리이언트의 애플리케이션 정보(웹 브라우저 정보, 등등) 
+- 통계 정보
+- 어떤 종류의 브라우저에서 장애가 발생하는지 파악 가능 
+- 요청에서 사용
+
+![image](https://github.com/Hoya324/SpringNote/assets/96857599/b581ffdd-2f6e-465d-a5ef-832293733538)
+
+### Server
+
+-> **요청을 처리하는 ORIGIN 서버(프록시 서버가 아닌 클라이언트의 응답을 해주는 서버)의 소프트웨어 정보**
+
+- Server: Apache/2.2.22 (Debian) 
+- server: nginx
+- 응답에서 사용
+
+### Date
+
+-> **메시지가 발생한 날짜와 시간**
+
+- Date: Tue, 15 Nov 1994 08:12:31 GMT
+- 응답에서 사용
+
+
+### 특별한 정보
+
+- Host: 요청한 호스트 정보(도메인)
+- Location: 페이지 리다이렉션
+- Allow: 허용 가능한 HTTP 메서드
+- Retry-After: 유저 에이전트가 다음 요청을 하기까지 기다려야 하는 시간
+
+
+### ⭐️Host (필수 헤더)
+
+-> **요청한 호스트 정보(도메인)**
+
+<img width="242" alt="스크린샷 2023-07-30 오후 2 35 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/553f3c1b-05da-4a08-8433-89289d2ab686">
+
+- 요청에서 사용
+- 필수
+- 하나의 서버가 여러 도메인을 처리해야 할 때
+- 하나의 IP 주소에 여러 도메인이 적용되어 있을 때
+
+**1. 같은 IP를 공유하는 여러 도메인이 있다.**
+
+<img width="559" alt="스크린샷 2023-07-30 오후 2 37 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/cd1270c3-a8a4-47ba-a4e0-46b5b4da200c">
+
+**2. Host가 없으면, 어느 도메인으로 가야할지 알 수 없다.**
+
+<img width="517" alt="스크린샷 2023-07-30 오후 2 37 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/a64b2e4c-5735-4416-9ab0-1dcf68065754">
+
+**3. Host 정보 필수**
+
+<img width="519" alt="스크린샷 2023-07-30 오후 2 37 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/edd12fb7-8f4f-4f26-9628-4dd84004c31c">
+
+### Location
+
+-> **페이지 리다이렉션**
+
+- 웹 브라우저는 3xx 응답의 결과에 Location 헤더가 있으면, Location 위치로 자동 이동 (리다이렉트)
+- 응답코드 3xx에서 설명
+- 201 (Created): Location 값은 요청에 의해 생성된 리소스 URI
+- 3xx (Redirection): Location 값은 요청을 자동으로 리디렉션하기 위한 대상 리소스를 가리킴
+
+### Allow
+
+-> **허용 가능한 HTTP 메서드**
+
+- 405 (Method Not Allowed) 에서 응답에 포함해야함 
+- Allow: GET, HEAD, PUT
+
+### Retry-After
+-> **유저 에이전트가 다음 요청을 하기까지 기다려야 하는 시간**
+
+- 503 (Service Unavailable): 서비스가 언제까지 불능인지 알려줄 수 있음 
+- Retry-After: Fri, 31 Dec 1999 23:59:59 GMT (날짜 표기) 
+- Retry-After: 120 (초단위 표기)
+
+### 인증
+- Authorization: 클라이언트 인증 정보를 서버에 전달 
+- WWW-Authenticate: 리소스 접근시 필요한 인증 방법 정의
+
+### Authorization
+-> **클라이언트 인증 정보를 서버에 전달**
+
+- Authorization: Basic xxxxxxxxxxxxxxxx
+
+> 인증 방식이 여러가지 있기 때문에 value에는 각 인증에 맞는 값을 넣으면 됨
+
+### WWW-Authenticate
+
+-> **리소스 접근시 필요한 인증 방법 정의**
+
+- 리소스 접근시 필요한 인증 방법 정의
+- 401 Unauthorized 응답과 함께 사용 
+- 401 오류가 나면, 아래와 같은 내용을 같이 클라이언트에게 제공하게 된다.
+	- WWW-Authenticate: Newauth realm="apps", type=1,<br>
+		    title="Login to \"apps\"", Basic realm="simple"
+		    
+
+### 쿠키
+- **Set-Cookie**: 서버에서 클라이언트로 쿠키 전달(응답)
+- **Cookie**: 클라이언트가 서버에서 받은 쿠키를 저장하고, HTTP 요청시 서버로 전달
+		    
+### 쿠키 미사용
+
+**1. 처음 welcome 페이지 접근**
+
+<img width="493" alt="스크린샷 2023-07-30 오후 2 45 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/d7fba655-6077-4bca-9475-a4100c3a73d5">
+
+**2. 로그인**
+
+<img width="491" alt="스크린샷 2023-07-30 오후 2 46 32" src="https://github.com/Hoya324/SpringNote/assets/96857599/b7ec0ce8-72be-4763-8421-5bb653bb1a8b">
+
+**3. 로그인 이후 welcome 페이지 접근 (안녕하세요. 홍길동님을 기대했으나, 안녕하세요 손님이 다시 나옴)**
+
+<img width="496" alt="스크린샷 2023-07-30 오후 2 47 01" src="https://github.com/Hoya324/SpringNote/assets/96857599/232cf149-f852-46e7-be46-cbc17e94b636">
+
+
+> ⭐️**Stateless**⭐️
+>
+> - HTTP는 기본적으로 무상태(Stateless) 프로토콜이다.
+> - 클라이언트와 서버가 요청과 응답을 주고 받으면 연결이 끊어진다. 
+> - 클라이언트가 다시 요청하면 서버는 이전 요청을 기억하지 못한다. 
+> - 클라이언트와 서버는 서로 상태를 유지하지 않는다.
+> 
+
+**4. 대안- 모든 요청에 사용자 정보 포함**
+
+<img width="487" alt="스크린샷 2023-07-30 오후 2 48 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/58f945ec-eaa9-48b3-bf8b-fc554721bc77">
+
+**모든 링크에 사용자 정보를 포함하면, 보안상의 문제부터 여러 문제점이 발생함.**
+
+<img width="332" alt="스크린샷 2023-07-30 오후 2 50 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/79e5aad7-5158-48c2-92ac-65551cfc01a7">
+
+> **모든 요청에 정보를 넘기는 문제**
+> - 모든 요청에 사용자 정보가 포함되도록 개발 해야함 
+> - 브라우저를 완전히 종료하고 다시 열면?
+> 쿠키를 사용하면 해결
+
+### 쿠키 사용
+
+**1. 로그인**
+
+-> **웹브라우저 내부에 저장있는 쿠키 저장소에에 user=홍길동을 저장**
+
+<img width="497" alt="스크린샷 2023-07-30 오후 2 52 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/c3291797-4f68-4f71-950c-6550b738624c">
+
+**2. 로그인 이후 welcome 페이지 접근**
+
+-> **웹브라우저는 쿠키 저장소를 무조건 확인함.**
+
+<img width="497" alt="스크린샷 2023-07-30 오후 2 53 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/86babf55-5c59-4b4b-afa8-829c012d5b40">
+
+**3. 모든 요청에 쿠키 정보 자동 포함**
+
+<img width="387" alt="스크린샷 2023-07-30 오후 2 53 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/8dae6c05-0d3e-49fa-8021-7b9422606272">
+
+> ⭐️중요! 모든 요청에 쿠키 정보를 넣으면 보안상의 문제부터 여러 문제 초래
+
+### 쿠키
+- 홍길동이라는 **이름을 그대로 노출하면 보안에 문제**가 생기므로, **sessionId를 만들어서 해결**한다.
+- 예) set-cookie: **sessionId=abcde1234**; **expires**=Sat, 26-Dec-2020 00:00:00 GMT; **path**=/; **domain**=.google.com; **Secure**
+
+- 사용처
+	- 사용자 로그인 세션 관리
+	- 광고 정보 트래킹
+- 쿠키 정보는 항상 서버에 전송됨
+	- 네트워크 트래픽 추가 유발 (문제점)
+	- 최소한의 정보만 사용(세션 id, 인증 토큰)
+	- 서버에 전송하지 않고, 웹 브라우저 내부에 데이터를 저장하고 싶으면 웹 스토리지 (localStorage, sessionStorage) 참고
+- 주의!
+	- 보안에 민감한 데이터는 저장하면 안됨(주민번호, 신용카드 번호 등등)
+
+### 쿠키 - 생명주기 
+
+-> **Expires, max-age**
+
+- Set-Cookie: **expires**=Sat, 26-Dec-2020 04:39:21 GMT
+	- 만료일이 되면 쿠키 삭제
+- Set-Cookie: **max-age**=3600 (3600초)
+	- 0이나 음수를 지정하면 쿠키 삭제
+- **세션 쿠키**: 만료 날짜를 생략하면 브라우저 종료시 까지만 유지 
+- **영속 쿠키**: 만료 날짜를 입력하면 해당 날짜까지 유지
+
+### 쿠키 - 도메인
+
+-> **Domain**
+
+- 예) domain=example.org
+- **명시: 명시한 문서 기준 도메인 + 서브 도메인 포함**
+	- domain=example.org를 지정해서 쿠키 생성
+		- example.org는 물론이고
+		- dev.example.org도 쿠키 접근 
+- **생략: 현재 문서 기준 도메인만 적용**
+	- example.org 에서만 쿠키 접근
+		- example.org 에서 쿠키를 생성하고 domain 지정을 생략
+		- dev.example.org는 쿠키 미접근
+
+### 쿠키 - 경로
+
+-> **Path**
+
+- 예) path=/home
+- **이 경로를 포함한 하위 경로 페이지만 쿠키 접근**
+- **일반적으로 path=/ 루트로 지정 **
+- 예)
+	- **path=/home 지정**
+	- /home -> 가능 
+	- /home/level1 -> 가능 
+	- /home/level1/level2 -> 가능 
+	- /hello -> 불가능
+
+### 쿠키 - 보안
+
+-> **Secure, HttpOnly, SameSite**
+
+- Secure
+	- 쿠키는 http, https를 구분하지 않고 전송
+	- Secure를 적용하면 https인 경우에만 전송
+- HttpOnly
+	- XSS 공격 방지
+	- 자바스크립트에서 접근 불가(document.cookie)
+	- HTTP 전송에만 사용
+- SameSite
+	- XSRF 공격 방지
+	- 요청 도메인과 쿠키에 설정된 도메인이 같은 경우만 쿠키 전송
+
+[캐시와 쿠키의 차이](https://zorba91.tistory.com/163)
 
