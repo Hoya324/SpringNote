@@ -4,7 +4,7 @@
 
 ## 인터넷 통신
 
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/6aaa0df4-661f-40cf-8c9e-6d98d263551b)
+<img width="671" alt="스크린샷 2023-08-02 오후 4 49 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/8e439d39-fa1d-43f5-a062-1b6d53263f8e">
 
 - 클라이언트가 서버로 요청을 보내는 방식을 알기 위해서는 IP를 이해해야한다.
 
@@ -19,15 +19,15 @@
 2. 서버에도 IP를 가진다.
 3. 메세지를 그냥 전달하는 것이 아니라 IP 패킷이라는 규칙을 통해 전달한다.
 
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/40ee9db2-c2d1-442b-9f3b-4233dd24cdd2)
+<img width="586" alt="스크린샷 2023-08-02 오후 4 50 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/ad7ecd1b-d9d0-43b9-a0fd-a4f74ad17097">
 
 4. 클라이언트 패킷 전달. (출발, 목적 IP와 메세지를 전달한다.)
 
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/86731f4c-cdb3-4c50-898d-4c31d79fcfda)
+<img width="640" alt="스크린샷 2023-08-02 오후 4 50 31" src="https://github.com/Hoya324/SpringNote/assets/96857599/790dfdd3-8fed-4f01-b410-d91d9367ec3c">
 
 5. 서버 패킷 전달. (출발, 목적 IP와 메세지를 전달한다.)
 
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/45dccce3-0bfe-4ea9-b297-b99d6dfcb33a)
+<img width="639" alt="스크린샷 2023-08-02 오후 4 50 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/7e79065e-6438-4d9e-b247-a79b8fc47a23">
 
 > 클라이언트 -> 서버의 노드와 서버 -> 클라이언트의 전달 노드가 다를 수 있다.
 > 
@@ -50,13 +50,13 @@
 
 ### 인터넷 프로토콜 스택의 4계층
 
-<img width="358" alt="스크린샷 2023-07-29 오전 11 22 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/fe6325b9-ee71-423e-964a-2bd68c93de8a">
+<img width="344" alt="스크린샷 2023-08-02 오후 4 51 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/81180b64-9c00-4887-a1ce-9c4935291c7b">
 
 ### 프로토콜 계층
 
-<img width="522" alt="스크린샷 2023-07-29 오전 11 22 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/1fe46963-0a8b-4b44-bb90-2c13452e2741">
+<img width="533" alt="스크린샷 2023-08-02 오후 4 51 12" src="https://github.com/Hoya324/SpringNote/assets/96857599/33ad31b9-c7f8-42d7-9065-faab58d620c2">
 
-<img width="585" alt="스크린샷 2023-07-29 오전 11 22 53" src="https://github.com/Hoya324/SpringNote/assets/96857599/2ce6490d-9871-4cb4-a00f-4bc318733bd1">
+<img width="593" alt="스크린샷 2023-08-02 오후 4 51 39" src="https://github.com/Hoya324/SpringNote/assets/96857599/3d09c7b3-3c37-40e9-8236-e80f1b54cd2d">
 
 ### IP 패킷과 TCP/IP 패킷 정보의 차이
 
@@ -64,13 +64,13 @@
 - 출발지 IP, 목적지 IP, 등을 가짐
 - 패킷(packet:소포)
 
-<img width="547" alt="스크린샷 2023-07-29 오전 11 25 39" src="https://github.com/Hoya324/SpringNote/assets/96857599/83be6ce3-9fe6-48fc-aedb-38429935e0d7">
+<img width="540" alt="스크린샷 2023-08-02 오후 4 51 55" src="https://github.com/Hoya324/SpringNote/assets/96857599/12cffb38-c3e9-4ec1-af8c-49d8920a0c51">
 
 **TCP/IP 패킷 정보**
 - 출발지 PORT, 목적지 PORT 전송 제어, 순서, 검증 정보 등
 - 순서 제어 문제 해결
 
-<img width="541" alt="스크린샷 2023-07-29 오전 11 26 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/3031d0c2-d704-4ff8-9b63-1715e4f53093">
+<img width="576" alt="스크린샷 2023-08-02 오후 4 52 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/181ccb87-43b6-46e3-b0a9-3ffb888d1406">
 
 ### TCP(Transmission Control Protocol/전송 제어 프로토콜) 특징
 - 연결지향 -> TCP 3 way handshake (가상 연결)
@@ -81,21 +81,21 @@
 
 **1. TCP 3 way handshake**
 
-<img width="599" alt="스크린샷 2023-07-29 오후 3 35 47" src="https://github.com/Hoya324/SpringNote/assets/96857599/a28c1480-a032-48d4-954d-3066586f28ee">
+<img width="591" alt="스크린샷 2023-08-02 오후 4 53 16" src="https://github.com/Hoya324/SpringNote/assets/96857599/1487fe20-4ec4-456f-aba5-5b8eb0af072c">
 
 - 상대가 접속이 가능한 상태인지 확인하고 응답을 보낼지 말지 결정함.
 - 가상 연결 -> 물리적인 연결이 아닌, 논리적인 연결임.
 
 **2. 데이터 전달 보증**
 
-<img width="513" alt="스크린샷 2023-07-29 오후 3 36 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/6ab0da61-a9ea-4571-9d75-e9232be83767">
+<img width="552" alt="스크린샷 2023-08-02 오후 4 53 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/62ef9341-89ee-43c7-b806-9df09679873d">
 
 - 수신측에 TCP 세그먼트가 도착하면 수신 측은 송신 측에게 도착했다고 알림. 이것을 ACK라고 함.
 - TCP 헤더에 ACK 관련 정보를 넣은 TCP 세그먼트를 반환함.
 
 **3. 순서 보장**
 
-<img width="519" alt="스크린샷 2023-07-29 오후 3 38 52" src="https://github.com/Hoya324/SpringNote/assets/96857599/ad63d0b6-9bf4-4e0e-afef-9b6b7825cfc9">
+<img width="523" alt="스크린샷 2023-08-02 오후 4 53 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/8f43d2b9-238c-4b0f-866e-49eaf6a825d3">
 
 - 순서가 잘못된 경우 순서를 맞춰서 다시 보낼 수 있도록 함.
 - TCP에 출발지 PORT, 목적지 PORT 전송 제어, 순서, 검증 정보 등이 있기 때문에 가능함.
@@ -127,7 +127,7 @@
 
 >  비유 IP: 아파트 PORT: 호수
 
-<img width="535" alt="스크린샷 2023-07-29 오후 3 46 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/19479633-b182-45aa-ae15-1de2e74294f8">
+<img width="541" alt="스크린샷 2023-08-02 오후 4 54 12" src="https://github.com/Hoya324/SpringNote/assets/96857599/45ff3a96-d6ed-4b8e-a0be-32a8943889fe">
 
 ### PORT 번호
 - 0 ~ 65535 할당 가능
@@ -150,7 +150,42 @@
 - 도메인 명을 IP와 연결
 - IP가 바뀌면 바뀐 IP를 도메인에 다시 연결
 
-<img width="598" alt="스크린샷 2023-07-29 오후 3 55 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/51b296bd-c7b0-4979-83f0-1c62b5ac641a">
+<img width="607" alt="스크린샷 2023-08-02 오후 4 55 05" src="https://github.com/Hoya324/SpringNote/assets/96857599/2ec6e4de-f8ee-4f6f-80a1-461b5f93d4c4">
+
+### DNS의 기본적인 동작 방식
+
+<img width="815" alt="스크린샷 2023-08-02 오후 3 22 11" src="https://github.com/Hoya324/COW-Spring-1/assets/96857599/3c5c3125-6b72-466f-b59a-387023bcc9ee">
+
+1. 사용자가 브라우저의 주소창에 도메인 주소를 입력한다.
+2. 브라우저는 이 도메인 주소의 실제 IP주소를 알아내기 위해서 DNS 서버에 요청한다.
+3. DNS 서버는 해당 도메인 주소에 맵핑되는 IP주소를 돌려준다.
+4. 브라우저는 돌려받은 IP주소를 통해 실제 서버에 페이지를 요청한다.
+5. 서버는 요청한 페이지를 응답한다.
+
+### DNS 서버 캐시
+- 자주 사용하는 페이지들은 캐시로 저장해둔다.
+- 매번 입력할 때마다 DNS 서버에 요청하여 돌려받는 것은 비효율적이기 때문이다.
+- 따라서 로컬 저장소에 최근 접속한 페이지의 IP주소를 도메인 주소와 매핑시켜서 저장시켜 놓는다.
+- 브라우저에서 요청이 들어오게 되면 DNS 서버에 요청하기 전에 이미 캐싱되어 있는 도메인 주소인지 확인을 하고, 있다면 바로 가져와서 IP주소로 반환시켜 준다.
+
+### IP 주소를 조사하는 방법 - DNS Resolver
+
+<img width="695" alt="스크린샷 2023-08-02 오후 3 29 41" src="https://github.com/Hoya324/COW-Spring-1/assets/96857599/123b9a7f-68cf-4c9d-83b3-add3067fff4a">
+
+Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
+
+1. Resolver는 DNS 서버에 조회 메시지를 보내며
+2. 거기에 반송되는 응답 메시지를 클라이언트에게 전달한다.
+
+- 이에, DNS Resolver는 Name Resolution을 실행하는 역할을 수행한다고도 말할 수 있다.
+
+> **Name Resolution**: DNS 원리를 사용하여 IP 주소를 조사하는 것
+ 
+> Resolver의 실체는 Socket 라이브러리에 들어있는 부품화한 프로그램이다. 이를 통해 애플리케이션에서 간단히 Resolver를 호출하여 이용할 수 있다.
+> 도메인명에서 IP 주소를 조사할 때 브라우저는 Socket 라이브러리의 Resolver를 이용한다.
+
+**Socket 라이브러리**
+- 네트워크의 기능을 호출하기 위한 프로그램 부품집이며 사전에 만들어진 부품을 통해 프로그래밍 작업 수고를 덜 수 있다.
 
 ## HTTP
 
@@ -169,6 +204,26 @@
 - HTTP/2 2015년: 성능 개선
 - HTTP/3 진행중: TCP 대신에 UDP 사용, 성능 개선
 
+### HTTP/2
+- HTTP 1.1의 파이프라이닝은 앞의 요청이 완료되기 이전에 요청을 연속적으로 보낼 수 있게 해준다.
+- 이런 방식은 3개의 요청이 있을 때, 두번째, 세번째 요청이 아무리 일찍 끝나도 HTTP 요청은 순차적이기 때문에 첫번째 요청의 응답이 오기 전까진 블로킹된다.
+- 이를 Head Of line blocking(HOL Blocking)이라고 한다.
+
+**Binary Framing Layer**
+
+<img width="649" alt="스크린샷 2023-08-02 오후 3 39 07" src="https://github.com/Hoya324/COW-Spring-1/assets/96857599/65267f21-6851-428f-9781-0326951b18cc">
+
+- HTTP/2는 HOL Blocking을 클라이언트와 서버 간의 HTTP 메시지를 캡슐화하고 전송하는 방법을 위한 새로운 계층을 통해 해결했다.
+
+### HTTP/2의 성능 개선
+- 하나의 요청을 차단하지 않고 여러 요청을 병렬로 인터리브 할 수 있다.
+	- **인터리브**: 한 요청의 처리과정에 다른 요청을 끼워넣을 수 있다는 의미
+- 하나의 응답을 차단하지 않고 여러 응답을 병렬로 인터리브 할 수 있다.
+- 단일 연결로 여러 요청과 응답을 병렬 전달한다.
+- 이미지 스프라이트, 도메인 샤딩등의 HTTP/1.x의 불필요한 최적화 기능을 삭제한다.
+- 불필요한 지연시간을 방지하고 네트워크 용량을 개선해서 페이지 로드 시간을 단축한다.
+- 이 외에도 Head Of Line Blocking 문제 또한 해결되어 병렬 처리를 위해 여러 TCP 연결이 필요하지 않게 되었다. 그 결과 어플리케이션을 더욱 빠르고 간단하고, 비용은 적게 만들 수 있게 됐다.
+
 ### 기반 프로토콜
 - TCP: HTTP/1.1, HTTP/2
 - UDP: HTTP/3
@@ -186,7 +241,7 @@
 - 클라이언트는 서버에 요청을 보내고, 응답을 대기
 - 서버가 요청에 대한 결과를 만들어서 응답
 
-<img width="487" alt="스크린샷 2023-07-29 오후 4 07 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/33409fbd-3855-4bd0-b16f-1caaf5a61edc">
+<img width="490" alt="스크린샷 2023-08-02 오후 4 56 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/9cd0b5e5-551d-4240-b947-85685a42897d">
 
 ### 무상태(Stateless) 프로토콜
 - 서버가 클라이언트의 상태를 보존X
@@ -247,35 +302,35 @@
 **연결을 유지하는 모델**
 - TCP/IP 연결의 경우 기본적으로 요청과 응답 후에 연결을 유지함.
 
-<img width="566" alt="스크린샷 2023-07-29 오후 4 28 05" src="https://github.com/Hoya324/SpringNote/assets/96857599/569fb34c-503f-451e-9d5d-94ab43b60b79">
+<img width="536" alt="스크린샷 2023-08-02 오후 4 57 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/2188f1ab-6dc4-44d0-ad69-65025cc37393">
 
 - 클라이언트2가 연결을 해도 클라이언트1과의 연결은 유지됨.
 
-<img width="576" alt="스크린샷 2023-07-29 오후 4 28 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/c62f03b1-c41e-475c-81ad-bf622e7d4e94">
+<img width="537" alt="스크린샷 2023-08-02 오후 4 57 31" src="https://github.com/Hoya324/SpringNote/assets/96857599/a675bb08-2092-45ef-a817-3f74414b2a84">
 
 - 클라이언트3을 연결할 때에도 클라이언트 1, 2의 연결은 유지되므로 서버 자원을 소모하게 됨.
 
-<img width="607" alt="스크린샷 2023-07-29 오후 4 29 39" src="https://github.com/Hoya324/SpringNote/assets/96857599/7a2e3cc8-1f01-49e2-b4ed-6dd4ec6145b3">
+<img width="589" alt="스크린샷 2023-08-02 오후 4 57 49" src="https://github.com/Hoya324/SpringNote/assets/96857599/aaba04af-c373-41f7-b82d-6d0943b24d1f">
 
 - 재연결
 
-<img width="604" alt="스크린샷 2023-07-29 오후 4 29 50" src="https://github.com/Hoya324/SpringNote/assets/96857599/7424c216-c008-4c12-93f2-0e03fe5561dc">
+<img width="594" alt="스크린샷 2023-08-02 오후 4 58 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/4cdfffde-b96b-46cb-9253-8248b0cf8ab6">
 
 **연결을 유지하지 않는 모델**
 
 - TCP/IP 연결 후 필요 없어진 연결은 끊어짐
 
-<img width="557" alt="스크린샷 2023-07-29 오후 4 30 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/f14a6301-52d4-4344-a258-fe34f2861361">
+<img width="572" alt="스크린샷 2023-08-02 오후 4 58 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/d55ee098-f79b-4fea-975a-93b9b14384c2">
 
 - 필요할 때 연결하고, 응답후 끊어지면 서버의 자원을 최소한으로 사용함.
 
-<img width="548" alt="스크린샷 2023-07-29 오후 4 30 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/632037e1-b4b7-4cc8-8a86-32c7998e4a63">
+<img width="566" alt="스크린샷 2023-08-02 오후 4 58 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/a185bfa2-9bdc-493c-87b9-15bb52288e13">
 
-<img width="554" alt="스크린샷 2023-07-29 오후 4 30 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/b2920d01-de5b-457d-aa9c-5b9591eb3989">
+<img width="555" alt="스크린샷 2023-08-02 오후 4 58 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/1cb9163f-f61b-4958-a715-0cd895bca34f">
 
-<img width="594" alt="스크린샷 2023-07-29 오후 4 30 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/35a20e63-8164-4e18-852b-cb51d6001f5c">
+<img width="593" alt="스크린샷 2023-08-02 오후 4 58 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/b86c7e68-6d80-4e4a-b734-48b2fd0b405c">
 
-<img width="600" alt="스크린샷 2023-07-29 오후 4 31 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/a19484ab-fa20-48f3-8cfe-d44ad262ee63">
+<img width="601" alt="스크린샷 2023-08-02 오후 4 58 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/22c34e0a-2beb-41ef-aabe-d222cd75d822">
 
 **비 연결성**
 - HTTP는 기본이 연결을 유지하지 않는 모델
@@ -292,9 +347,9 @@
   - 지금은 HTTP 지속 연결(Persistent Connections)로 문제 해결
   - HTTP/2, HTTP/3에서 더 많은 최적화
  
-<img width="548" alt="스크린샷 2023-07-29 오후 4 41 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/d052f5e0-b39c-4df5-a858-7c94be737422">
+<img width="363" alt="스크린샷 2023-08-02 오후 4 59 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/776bae38-5268-4c23-aca0-79de423c8037">
 
-<img width="561" alt="스크린샷 2023-07-29 오후 4 41 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/a5cd82a4-a633-4bd4-b75c-3b21c3ff3154">
+<img width="360" alt="스크린샷 2023-08-02 오후 4 59 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/a750ee0e-6370-4bb9-acf3-103411c8fb95">
 
 **스테이스리스를 기억하자**
 - 서버 개발자들이 어려워하는 업무
@@ -305,11 +360,11 @@
 
 ## HTTP 메시지
 
-<img width="607" alt="스크린샷 2023-07-29 오후 4 46 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/2c9f8d60-0872-4a03-96f4-feddbda986c8">
+<img width="644" alt="스크린샷 2023-08-02 오후 4 59 45" src="https://github.com/Hoya324/SpringNote/assets/96857599/a577ffcf-fca4-4f62-9793-12efd47b1ea4">
 
 ### 시작 라인
 
-<img width="276" alt="스크린샷 2023-07-29 오후 5 19 05" src="https://github.com/Hoya324/SpringNote/assets/96857599/da46f3f4-7ad5-44b6-9bed-45ccb3206d9c">
+<img width="288" alt="스크린샷 2023-08-02 오후 5 00 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/745beebb-b298-4160-8feb-4f1a3b28ffcf">
 
 **요청 메시지**
 - start-line = **request-line** / status-line
@@ -348,7 +403,7 @@
 - header-field = field-name ":" OWS field-value OWS (OWS: 띄어쓰기 허용)
 - field-name은 대소문자 구문 없음
 
-<img width="552" alt="스크린샷 2023-07-29 오후 5 18 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/e030a0dd-477c-412c-8c86-533bc39f8361">
+<img width="597" alt="스크린샷 2023-08-02 오후 5 00 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/8f687996-83a4-410a-93e6-2d9405977be7">
 
 **용도**
 - HTTP 전송에 필요한 모든 부가정보
@@ -360,7 +415,7 @@
 
 ### HTTP 메시지 바디
 
-<img width="278" alt="스크린샷 2023-07-29 오후 5 25 27" src="https://github.com/Hoya324/SpringNote/assets/96857599/da404465-98bf-4403-876a-4c37a7d5df30">
+<img width="291" alt="스크린샷 2023-08-02 오후 5 01 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/a5fb9db0-ef21-499b-9cdd-daf06a8e91ba">
 
 **용도**
 - 실제 전송할 데이터
@@ -439,7 +494,7 @@
 
 ### GET
 
-<img width="367" alt="스크린샷 2023-07-29 오후 5 36 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/fd603fc4-a08f-4c91-981c-905f2a0b289c">
+<img width="351" alt="스크린샷 2023-08-02 오후 5 01 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/d5c47fb9-4405-4ce3-a8cb-d9a00a0ebcf0">
 
 - 리소스 조회
 - 서버에 전달하고 싶은 데이터는 query(쿼리 파라미터, 쿼리 스트링)를 통해서 전달
@@ -447,21 +502,21 @@
 
 **리소스 조회1 - 메시지 전달**
 
-<img width="625" alt="스크린샷 2023-07-29 오후 5 36 36" src="https://github.com/Hoya324/SpringNote/assets/96857599/42797d07-9e02-4e1d-82f6-957403fce976">
+<img width="598" alt="스크린샷 2023-08-02 오후 5 01 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/bbdc7293-4bc4-4f27-924c-a7f8728f8967">
 
 **리소스 조회2 - 서버도착**
 
-<img width="608" alt="스크린샷 2023-07-29 오후 5 36 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/21b4a3de-d197-4018-8465-15e520b9d8e4">
+<img width="604" alt="스크린샷 2023-08-02 오후 5 02 16" src="https://github.com/Hoya324/SpringNote/assets/96857599/8dfec5b3-3678-4a88-bb2f-a6991a4af708">
 
 **리소스 조회3 - 응답 데이터**
 
-<img width="593" alt="스크린샷 2023-07-29 오후 5 37 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/1496454e-50e3-425c-b378-fea1c8c470bd">
+<img width="578" alt="스크린샷 2023-08-02 오후 5 02 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/d458840c-7685-4686-91f2-39c12428a445">
 
 ### POST
 
 **클라이언트 측에서 데이터를 전달하여 처리를 요청하는 것**
 
-<img width="247" alt="스크린샷 2023-07-29 오후 5 37 35" src="https://github.com/Hoya324/SpringNote/assets/96857599/11284cc0-8f73-4e81-8c4a-8cad28e56318">
+<img width="228" alt="스크린샷 2023-08-02 오후 5 02 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/1d74475e-3052-4935-b9f0-9a82524665de">
 
 - 요청 데이터 처리
 - 메시지 바디를 통해 서버로 요청 데이터 전달
@@ -469,17 +524,17 @@
   - 메시지 바디를 통해 들어온 데이터를 처리하는 모든 기능을 수행한다.
 - 주로 전달된 데이터로 신규 리소스 등록, 프로세스 처리에 사용
 
-**메시지 등록 - `/members`로 오면 전달된 데이터를 어떤 방식으로 처리할지 미리 약속함.**
+**메시지 전달 - `/members`로 오면 전달된 데이터를 어떤 방식으로 처리할지 미리 약속함.**
 
-<img width="561" alt="스크린샷 2023-07-29 오후 5 39 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/bae63814-29d7-48cd-a7c7-a209dba81274">
+<img width="532" alt="스크린샷 2023-08-02 오후 5 03 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/5b23225c-c8a3-4863-865b-528e995bde73">
 
 **신규 리소스 생성 - 신규 리소스 식별자 생성**
 
-<img width="629" alt="스크린샷 2023-07-29 오후 5 40 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/9ae0df40-284c-4dce-9512-220dc21a168e">
+<img width="603" alt="스크린샷 2023-08-02 오후 5 04 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/026adcbd-9372-4deb-b629-b821c8a69a43">
 
 **응답 데이터**
 
-<img width="611" alt="스크린샷 2023-07-29 오후 5 40 53" src="https://github.com/Hoya324/SpringNote/assets/96857599/9dd77a7f-b20c-4217-9b90-52acd56d561f">
+<img width="555" alt="스크린샷 2023-08-02 오후 5 04 14" src="https://github.com/Hoya324/SpringNote/assets/96857599/001d8c88-a203-47b7-96ce-bda36568a34d">
 
 ### 요청 데이터를 어떻게 처리한다는 뜻일까? 
 예시)
@@ -513,7 +568,7 @@
 
 ### PUT
 
-<img width="239" alt="스크린샷 2023-07-29 오후 5 49 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/c9974401-5330-40de-b18c-9f3bd89f3aef">
+<img width="227" alt="스크린샷 2023-08-02 오후 5 04 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/357ff198-ed5c-4d53-be54-1e5ef07f8e94">
 
 - **리소스를 완전히 대체**
 	- 리소스가 있으면 대체 
@@ -525,14 +580,14 @@
 
 ### PATCH
 
-<img width="222" alt="스크린샷 2023-07-29 오후 5 51 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/a370f015-c83b-4e4d-a987-e4ddb294dbb8">
+<img width="221" alt="스크린샷 2023-08-02 오후 5 05 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/05c0638b-436a-4f1f-96f8-686b12be4aa7">
 
 - 리소스를 부분 변경하는 것
 - 특정 HTTP가 PATCH를 못 받아들이는 경우 POST를 사용하면 됨
 
 ### DELETE
 
-<img width="222" alt="스크린샷 2023-07-29 오후 5 52 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/3b642232-2db3-4fdf-9973-d36966fe6520">
+<img width="226" alt="스크린샷 2023-08-02 오후 5 05 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/61ef5f95-156d-40c6-80ef-3893d4d4fead">
 
 - 리소스 제거
 
@@ -541,7 +596,7 @@
 - **멱등(Idempotent Methods)**
 - **캐시가능(Cacheable Methods)**
 
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/f05d43e6-3131-443c-a53a-1367c6db4524)
+<img width="563" alt="스크린샷 2023-08-02 오후 5 06 01" src="https://github.com/Hoya324/SpringNote/assets/96857599/f747bb79-8969-46fd-8ffc-fe7521631fbb">
 
 ### 안전(Safe)
 - 호출해도 리소스를 변경하지 않는다. (예: GET, HEAD)
@@ -599,7 +654,7 @@
 ### 정적 데이터 조회
 - 쿼리 파라미터 미사용
 
-<img width="627" alt="스크린샷 2023-07-30 오후 12 51 12" src="https://github.com/Hoya324/SpringNote/assets/96857599/e0dafca4-4372-4a2f-a08f-97fa6702f294">
+<img width="622" alt="스크린샷 2023-08-02 오후 5 06 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/a62dcdba-f925-4dee-bcac-5136339c66c4">
 
 **정리**
 - 이미지, 정적 텍스트 문서
@@ -609,7 +664,7 @@
 ### 동적 데이터 조회
 - 쿼리 파라미터 사용
 
-<img width="519" alt="스크린샷 2023-07-30 오후 12 52 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/eaaa0aae-0013-4ab6-9db0-61d29788b61d">
+<img width="604" alt="스크린샷 2023-08-02 오후 5 06 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/2593cef3-3a66-4f0f-9bb8-80ead966b881">
 
 **정리**
 - 주로 검색, 게시판 목록에서 정렬 필터(검색어)
@@ -620,15 +675,15 @@
 ### HTML Form 데이터 전송
 - POST 전송 -> 저장
 
-<img width="546" alt="스크린샷 2023-07-30 오후 12 53 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/00905558-0283-4418-bab1-911189d6917e">
+<img width="637" alt="스크린샷 2023-08-02 오후 5 07 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/cc207957-379c-4eaf-b62a-e4858e7fdd37">
 
 - GET 전송 -> 저장
 
-<img width="542" alt="스크린샷 2023-07-30 오후 12 53 35" src="https://github.com/Hoya324/SpringNote/assets/96857599/35dd84ef-f1d2-43b5-947d-d046d2598eeb">
+<img width="623" alt="스크린샷 2023-08-02 오후 5 07 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/834228d1-5d60-4a76-b274-3c3031c04751">
 
 - GET 전송 -> 조회
 
-<img width="526" alt="스크린샷 2023-07-30 오후 12 53 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/885220a4-b1c9-4cc5-8a60-d6ee6c8e816d">
+<img width="633" alt="스크린샷 2023-08-02 오후 5 07 48" src="https://github.com/Hoya324/SpringNote/assets/96857599/3f078e9a-13a7-499b-9f40-bef088f24bef">
 
 > 주의! GET은 조회에만 사용!
 > 
@@ -636,7 +691,7 @@
 
 - multipart/form-data (주로 바이너리 데이터를 전송할 때 사용)
 
-<img width="643" alt="스크린샷 2023-07-30 오후 12 54 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/1f85b67e-1db3-4dd2-9d31-bc5478d09cb2">
+<img width="638" alt="스크린샷 2023-08-02 오후 5 08 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/02bb75f7-b336-4302-b1ca-2d2bca80a643">
 
 **정리**
 
@@ -656,7 +711,7 @@
 ### HTTP API 데이터 전송
 - IOS나 안드로이드 같은 모바일 기기에서 서버에 바로 데이터를 전송해야할 때
 
-<img width="535" alt="스크린샷 2023-07-30 오후 12 57 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/f8a63f15-7ce3-4bba-95e9-69469880562f">
+<img width="539" alt="스크린샷 2023-08-02 오후 5 08 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/82b96565-f634-4a14-9d9f-9e46179bfd38">
 
 **정리**
 - 서버 to 서버
@@ -815,12 +870,12 @@
 
 **200 OK - 요청성공**
 
-<img width="562" alt="스크린샷 2023-07-30 오후 1 21 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/1ef35af7-31a0-4bce-9df5-b56330751a66">
+<img width="549" alt="스크린샷 2023-08-02 오후 5 09 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/9882ca36-ed35-4ef0-837f-f0bc5519d274">
 
 **201 Created**
 - POST 요청이므로 서버에서 자원을 생성하고, 자원에 대한 URI도 관리
 
-<img width="641" alt="스크린샷 2023-07-30 오후 1 22 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/951110d4-fcf1-4e9d-82fb-346e6aa52f37">
+<img width="653" alt="스크린샷 2023-08-02 오후 5 09 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/71e0b9eb-3073-4300-bc8b-3a3e50bac2d9">
 
 **202 Accepted**
 -> 요청이 접수되었으나 처리가 완료되지 않았음
@@ -851,7 +906,7 @@
 
 **자동 리다이렉트 흐름**
 
-<img width="559" alt="스크린샷 2023-07-30 오후 1 25 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/a4298d99-5753-4fa1-9ecb-437a59454c3c">
+<img width="560" alt="스크린샷 2023-08-02 오후 5 10 14" src="https://github.com/Hoya324/SpringNote/assets/96857599/6765bec6-f762-4d55-af05-85530571f4ca">
 
 - 기존에 /event를 사용하다가 경로를 /new-event로 바꿈
 -> 문제점: 기존의 경로를 저장해두고 사용하던 클라이언트들은 /event를 타고 들어옴
@@ -874,13 +929,13 @@
 - **301 Moved Permanently (실무에서 자주 사용함)**
 	- **리다이렉트시 요청 메서드가 GET으로 변하고, 본문이 제거될 수 있음(MAY)**
 
-<img width="468" alt="스크린샷 2023-07-30 오후 1 32 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/d4f4efb4-9e2f-408d-ab72-04ba05cc6559">
+<img width="555" alt="스크린샷 2023-08-02 오후 5 10 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/592c2de0-5117-4ac7-92a0-32728b988b75">
 
 - **308 Permanent Redirect**
 	- 301과 기능은 같음
 	- **리다이렉트 시 요청 메서드와 본문 유지(처음 POST를 보내면 리다이렉트도 POST 유지)**
 
-<img width="456" alt="스크린샷 2023-07-30 오후 1 33 26" src="https://github.com/Hoya324/SpringNote/assets/96857599/9b3ba024-e337-47f9-8ade-4433ead674dd">
+<img width="561" alt="스크린샷 2023-08-02 오후 5 11 01" src="https://github.com/Hoya324/SpringNote/assets/96857599/a75435cf-afa7-480a-a2d2-278bc66fbe88">
 
 ### 일시적인 리다이렉션 -> 302, 307, 303
  
@@ -903,7 +958,7 @@
 - 새로고침은 다시 요청
 - 중복 주문이 될 수 있다.
 
-<img width="549" alt="스크린샷 2023-07-30 오후 1 36 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/1b1430fb-c42c-47f3-aaa9-7abd432e0009">
+<img width="662" alt="스크린샷 2023-08-02 오후 5 11 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/441780e7-398e-4731-a4cc-56e9e0e407f8">
 
 > 서버 차원에서 중복되 주문번호를 제거하는 것이 맞지만, 클라이언트 차원에서도 한번 방지하는 것도 좋다.
 
@@ -915,7 +970,7 @@
 
 **리다이렉션 302 Found 또는 303 See Other를 통해 메서드를 Get으로 변경**
 
-<img width="551" alt="스크린샷 2023-07-30 오후 1 37 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/11c4e9f2-2582-4b4c-8127-bf445700e6b3">
+<img width="668" alt="스크린샷 2023-08-02 오후 5 11 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/460b4c7e-c4f5-4fe9-9be3-7a1aa3890be5">
 
 - PRG 이후 리다이렉트
 	- URL이 이미 POST -> GET으로 리다이렉트 됨
@@ -1017,7 +1072,7 @@
 - header-field = field-name ":" OWS field-value OWS (OWS: 띄어쓰기 허용)
 - field-name은 대소문자 구문 없음
 
-<img width="552" alt="스크린샷 2023-07-29 오후 5 18 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/e030a0dd-477c-412c-8c86-533bc39f8361">
+<img width="609" alt="스크린샷 2023-08-02 오후 5 12 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/548c7c85-b3b4-458d-9cb4-f9dd588362dc">
 
 **용도**
 - HTTP 전송에 필요한 모든 부가정보
@@ -1031,7 +1086,7 @@
 
 **HTTP 헤더 - 분류**
 
-<img width="371" alt="스크린샷 2023-07-30 오후 1 52 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/73300359-8f16-44de-8b17-c49f346a5584">
+<img width="397" alt="스크린샷 2023-08-02 오후 5 16 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/9602e0ad-a48a-4492-8680-7826b5543dae">
 
 - 헤더 분류
 	- **General 헤더**: 메시지 전체에 적용되는 정보, 예) Connection: close
@@ -1041,7 +1096,7 @@
 
 **HTTP Body - message body**
 
-<img width="348" alt="스크린샷 2023-07-30 오후 1 53 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/42e5caf8-878b-48dd-89f9-9e24b53f8124">
+<img width="396" alt="스크린샷 2023-08-02 오후 5 16 49" src="https://github.com/Hoya324/SpringNote/assets/96857599/e4ea994f-3471-45de-9c88-aa21dc07b4fd">
 
 - 메시지 본문(message body)은 엔티티 본문(entity body)을 전달하는데 사용
 - 엔티티 본문은 요청이나 응답에서 전달할 실제 데이터
@@ -1061,7 +1116,7 @@
 
 **HTTP BODY - message body**
 
-<img width="297" alt="스크린샷 2023-07-30 오후 1 59 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/e2d979fb-2e02-48ee-a743-ed08c12079fc">
+<img width="399" alt="스크린샷 2023-08-02 오후 5 17 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/888353d5-44c6-47f6-93ea-b8d36eac680e">
 
 - 메시지 본문(message body)을 통해 표현 데이터 전달
 - 메시지 본문 = 페이로드(payload)
@@ -1073,7 +1128,7 @@
 
 ### 표현
 
-<img width="293" alt="스크린샷 2023-07-30 오후 2 03 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/b840b2d6-d904-4c34-bf71-f72116276c50">
+<img width="341" alt="스크린샷 2023-08-02 오후 5 17 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/ba5b8400-e152-459d-ace2-c16c25c3f6ba">
 
 - Content-Type: 표현 데이터의 형식
 - Content-Encoding: 표현 데이터의 압축 방식
@@ -1086,7 +1141,7 @@
 **표현 데이터의 형식 설명**
 - application/json은 기본이 UTF-8임
 
-<img width="250" alt="스크린샷 2023-07-30 오후 2 04 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/80799316-b800-464c-b459-2b2b97a26c63">
+<img width="289" alt="스크린샷 2023-08-02 오후 5 17 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/0e68d978-a106-4381-9646-ec8b1bc77c70">
 
 - 미디어 타입, 문자 인코딩
 - 예)
@@ -1097,7 +1152,7 @@
 ### Content-Encoding (압축할 때)
 **표현 데이터 인코딩**
 
-<img width="251" alt="스크린샷 2023-07-30 오후 2 06 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/d597acc5-4b18-447a-b74a-87fa686a5fba">
+<img width="285" alt="스크린샷 2023-08-02 오후 5 18 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/d3f9e962-c027-4ca5-86ed-d876176f2633">
 
 - 표현 데이터를 압축하기 위해 사용
 - 데이터를 전달하는 곳에서 압축 후 인코딩 헤더 추가
@@ -1110,7 +1165,7 @@
 ### Content-Language (표현 데이터의 자연어 표시)
 **표현 데이터의 자연 언어**
 
-<img width="217" alt="스크린샷 2023-07-30 오후 2 07 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/84318f35-4d43-4f95-b2b2-d4362e5d8762">
+<img width="249" alt="스크린샷 2023-08-02 오후 5 18 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/8dea2c08-d969-4e23-bb9c-825bd4f55497">
 
 - 표현 데이터의 자연 언어를 표현
 - 예)
@@ -1121,7 +1176,7 @@
 ### Content-Length
 **표현 데이터의 길이**
 
-<img width="218" alt="스크린샷 2023-07-30 오후 2 08 36" src="https://github.com/Hoya324/SpringNote/assets/96857599/c5e20700-24c3-475e-a70a-57fa6509d525">
+<img width="244" alt="스크린샷 2023-08-02 오후 5 18 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/617cbee3-85ae-4bc7-927a-8f1167166aee">
 
 - 바이트 단위
 - Transfer-Encoding(전송 코딩)을 사용하면 Content-Length를 사용하면 안됨
@@ -1142,24 +1197,24 @@
 
 -> **클라이언트가 한국인지 아닌지 정보가 존재하지 않음**
 
-<img width="447" alt="스크린샷 2023-07-30 오후 2 12 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/22ffdc1f-db81-48ad-88e5-10987ae71195">
+<img width="503" alt="스크린샷 2023-08-02 오후 5 19 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/ad3fa25f-b24a-46cc-87b5-1025ab607e48">
 
 **Accept-Language 적용 후**
 
 -> **Accept-Language가 있으면 선호하는 언어가 한국어인 것을 HTTP Header로 처리할 수 있음.**
 
-<img width="443" alt="스크린샷 2023-07-30 오후 2 12 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/9afac02a-fe09-4b7a-954b-b790b47dfac3">
+<img width="496" alt="스크린샷 2023-08-02 오후 5 19 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/ab401903-b43b-42b8-85e8-1d94dc922422">
 
 **Accept-Language 복잡한 예시**
 
 -> 복잡한 예시: 한국어를 희망하는 클라이언트가 독일어와 영어를 지원하는 서버에서 기본 설정인 독일어보단 영어를 희망함.
 
-<img width="432" alt="스크린샷 2023-07-30 오후 2 14 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/75068068-f1aa-4f39-8ffb-987d6dfdc44f">
+<img width="505" alt="스크린샷 2023-08-02 오후 5 19 34" src="https://github.com/Hoya324/SpringNote/assets/96857599/66be346b-1eff-409b-8f96-00478f318273">
 
 **협상과 우선순위1** 
 -> Quality Values(q)
 
-<img width="437" alt="스크린샷 2023-07-30 오후 2 18 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/60bd0e14-19cc-4059-8731-979b2988e32a">
+<img width="366" alt="스크린샷 2023-08-02 오후 5 19 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/c82e7376-117e-41c4-8c0e-b69b7f96c2e6">
 
 - Quality Values(q) 값 사용
 - 0~1, **클수록 높은 우선순위**
@@ -1174,7 +1229,7 @@
 
 -> Quality Values(q)
 
-<img width="322" alt="스크린샷 2023-07-30 오후 2 20 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/08045322-dcd3-4df5-a441-5aea2ab28c33">
+<img width="359" alt="스크린샷 2023-08-02 오후 5 21 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/bb06e314-ecf7-412a-a9ec-277facafb58a">
 
 - 구체적인 것이 우선한다.
 - Accept: text/*, text/plain, text/plain;format=flowed, */*
@@ -1190,7 +1245,7 @@
 - 구체적인 것을 기준으로 미디어 타입을 맞춘다.
 - Accept: text/*;q=0.3, text/html;q=0.7, text/html;level=1,  text/html;level=2;q=0.4, */*;q=0.5
 
-<img width="154" alt="스크린샷 2023-07-30 오후 2 21 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/d51f9efb-0bd6-4208-8604-3bbbbcac3a07">
+<img width="177" alt="스크린샷 2023-08-02 오후 5 21 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/bd1a41e8-ab34-4ac8-a019-f9d7172240e7">
 
 ### 전송 방식
 - Transfer-Encoding
@@ -1207,25 +1262,25 @@
 
 -> **컨텐츠에 대한 길이를 알 때 사용**
 
-<img width="517" alt="스크린샷 2023-07-30 오후 2 23 35" src="https://github.com/Hoya324/SpringNote/assets/96857599/b920c398-30f1-453e-9afc-729ce16e3b54">
+<img width="599" alt="스크린샷 2023-08-02 오후 5 21 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/6fef6558-b93b-4e0b-9653-33933848856d">
 
 ### 압축 전송 Content-Encoding
 
 -> **Content-Encoding을 꼭 입력해야함**
 
-<img width="512" alt="스크린샷 2023-07-30 오후 2 24 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/cc26dada-4bc0-4046-b039-b85f7bc892de">
+<img width="582" alt="스크린샷 2023-08-02 오후 5 21 48" src="https://github.com/Hoya324/SpringNote/assets/96857599/7555b6ca-c5b9-45dd-9284-48217e227a95">
 
 ### 분할 전송 Transfer-Encoding
 
 -> **Content-Length를 보내면 안 됨. (예상이 되지 않음, 청크들마다 길이가 나옴.)**
 
-<img width="521" alt="스크린샷 2023-07-30 오후 2 26 15" src="https://github.com/Hoya324/SpringNote/assets/96857599/a2e27d8a-a702-4910-9e52-c6767322632a">
+<img width="590" alt="스크린샷 2023-08-02 오후 5 23 19" src="https://github.com/Hoya324/SpringNote/assets/96857599/76ca1a40-8930-431d-9575-1de722f7ff00">
 
 ### 범위 전송 Range, Content-Range
 
 -> **중간에 끊기면 처음부터 다시 받지 않도록 범위를 설정할 수 있음.**
 
-<img width="483" alt="스크린샷 2023-07-30 오후 2 27 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/78199b7f-df2d-4a2e-a228-d4a4841f1f88">
+<img width="561" alt="스크린샷 2023-08-02 오후 5 23 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/b4ce3c0d-eed4-4bad-8917-a0ca52a86637">
 
 ### 일반 전송
 - From: 유저 에이전트의 이메일 정보
@@ -1251,12 +1306,6 @@
 
 > 참고: referer는 단어 referrer의 오타
 
-**이전의 웹 페이지를 알려줌.**
-
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/4b021585-d233-4f00-81fe-b539da8228df)
-
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/66a159c7-2637-42f6-abfc-d18cc461bd8e)
-
 ### User-Agent
 
 -> **유저 에이전트 애플리케이션 정보**
@@ -1266,8 +1315,6 @@
 - 통계 정보
 - 어떤 종류의 브라우저에서 장애가 발생하는지 파악 가능 
 - 요청에서 사용
-
-![image](https://github.com/Hoya324/SpringNote/assets/96857599/b581ffdd-2f6e-465d-a5ef-832293733538)
 
 ### Server
 
@@ -1297,7 +1344,7 @@
 
 -> **요청한 호스트 정보(도메인)**
 
-<img width="242" alt="스크린샷 2023-07-30 오후 2 35 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/553f3c1b-05da-4a08-8433-89289d2ab686">
+<img width="278" alt="스크린샷 2023-08-02 오후 5 24 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/ab374b06-5b3b-4c1b-8674-1699f73ff2e6">
 
 - 요청에서 사용
 - 필수
@@ -1306,15 +1353,16 @@
 
 **1. 같은 IP를 공유하는 여러 도메인이 있다.**
 
-<img width="559" alt="스크린샷 2023-07-30 오후 2 37 02" src="https://github.com/Hoya324/SpringNote/assets/96857599/cd1270c3-a8a4-47ba-a4e0-46b5b4da200c">
+<img width="638" alt="스크린샷 2023-08-02 오후 5 25 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/bec030c4-bf9e-42f7-aec5-50109ad5998e">
+
 
 **2. Host가 없으면, 어느 도메인으로 가야할지 알 수 없다.**
 
-<img width="517" alt="스크린샷 2023-07-30 오후 2 37 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/a64b2e4c-5735-4416-9ab0-1dcf68065754">
+<img width="608" alt="스크린샷 2023-08-02 오후 5 25 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/a0037348-27d5-487f-bb25-983b7fbc235b">
 
 **3. Host 정보 필수**
 
-<img width="519" alt="스크린샷 2023-07-30 오후 2 37 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/edd12fb7-8f4f-4f26-9628-4dd84004c31c">
+<img width="608" alt="스크린샷 2023-08-02 오후 5 25 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/3d85d62d-1c8d-4132-861a-e933327d7d8f">
 
 ### Location
 
@@ -1369,15 +1417,15 @@
 
 **1. 처음 welcome 페이지 접근**
 
-<img width="493" alt="스크린샷 2023-07-30 오후 2 45 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/d7fba655-6077-4bca-9475-a4100c3a73d5">
+<img width="574" alt="스크린샷 2023-08-02 오후 5 25 53" src="https://github.com/Hoya324/SpringNote/assets/96857599/29005689-539f-4412-9714-4d8d0641fccf">
 
 **2. 로그인**
 
-<img width="491" alt="스크린샷 2023-07-30 오후 2 46 32" src="https://github.com/Hoya324/SpringNote/assets/96857599/b7ec0ce8-72be-4763-8421-5bb653bb1a8b">
+<img width="559" alt="스크린샷 2023-08-02 오후 5 26 03" src="https://github.com/Hoya324/SpringNote/assets/96857599/914b0b4d-e1b3-44a3-8823-48fe1421bf8c">
 
 **3. 로그인 이후 welcome 페이지 접근 (안녕하세요. 홍길동님을 기대했으나, 안녕하세요 손님이 다시 나옴)**
 
-<img width="496" alt="스크린샷 2023-07-30 오후 2 47 01" src="https://github.com/Hoya324/SpringNote/assets/96857599/232cf149-f852-46e7-be46-cbc17e94b636">
+<img width="585" alt="스크린샷 2023-08-02 오후 5 26 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/bcea972a-12c5-43a1-8643-32a12c48be53">
 
 
 > ⭐️**Stateless**⭐️
