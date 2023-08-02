@@ -1438,11 +1438,11 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 
 **4. 대안- 모든 요청에 사용자 정보 포함**
 
-<img width="487" alt="스크린샷 2023-07-30 오후 2 48 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/58f945ec-eaa9-48b3-bf8b-fc554721bc77">
+<img width="568" alt="스크린샷 2023-08-02 오후 7 00 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/09d09d7e-f1f6-4e00-bb8f-3d6a4182b976">
 
 **모든 링크에 사용자 정보를 포함하면, 보안상의 문제부터 여러 문제점이 발생함.**
 
-<img width="332" alt="스크린샷 2023-07-30 오후 2 50 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/79e5aad7-5158-48c2-92ac-65551cfc01a7">
+<img width="372" alt="스크린샷 2023-08-02 오후 7 00 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/52a37263-b45b-445d-8c0e-6a7e93606c2f">
 
 > **모든 요청에 정보를 넘기는 문제**
 > - 모든 요청에 사용자 정보가 포함되도록 개발 해야함 
@@ -1455,17 +1455,17 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 
 -> **웹브라우저 내부에 저장있는 쿠키 저장소에에 user=홍길동을 저장**
 
-<img width="497" alt="스크린샷 2023-07-30 오후 2 52 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/c3291797-4f68-4f71-950c-6550b738624c">
+<img width="559" alt="스크린샷 2023-08-02 오후 7 01 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/3041caa2-e29f-4c70-9e82-0a66353fb98e">
 
 **2. 로그인 이후 welcome 페이지 접근**
 
 -> **웹브라우저는 쿠키 저장소를 무조건 확인함.**
 
-<img width="497" alt="스크린샷 2023-07-30 오후 2 53 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/86babf55-5c59-4b4b-afa8-829c012d5b40">
+<img width="566" alt="스크린샷 2023-08-02 오후 7 01 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/0b77b4b1-ccfc-4b18-8bd4-8350178a49cd">
 
 **3. 모든 요청에 쿠키 정보 자동 포함**
 
-<img width="387" alt="스크린샷 2023-07-30 오후 2 53 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/8dae6c05-0d3e-49fa-8021-7b9422606272">
+<img width="455" alt="스크린샷 2023-08-02 오후 7 01 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/ba5f33e4-6fa6-47ce-8527-567b4976d8bf">
 
 > ⭐️중요! 모든 요청에 쿠키 정보를 넣으면 보안상의 문제부터 여러 문제 초래
 
@@ -1545,15 +1545,15 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 ### 캐시 기본 동작- 캐시가 없을 때
 **첫 번째 요청**
 
-<img width="595" alt="스크린샷 2023-07-30 오후 3 04 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/7b1eb691-1e06-4d3a-9633-d4168c5dda64">
+<img width="594" alt="스크린샷 2023-08-02 오후 7 02 27" src="https://github.com/Hoya324/SpringNote/assets/96857599/6e0b9152-1236-42f0-84a0-86123a6d67cf">
 
-<img width="593" alt="스크린샷 2023-07-30 오후 3 05 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/e13f441e-f9d2-4655-80a6-32779f8548eb">
+<img width="587" alt="스크린샷 2023-08-02 오후 7 03 06" src="https://github.com/Hoya324/SpringNote/assets/96857599/aece33f1-12d9-4348-87e1-602a21cbc6ce">
 
 **두 번째 요청**
 
-<img width="594" alt="스크린샷 2023-07-30 오후 3 05 47" src="https://github.com/Hoya324/SpringNote/assets/96857599/1e35f55c-1923-40e0-8ea2-5e4779f07c13">
+<img width="585" alt="스크린샷 2023-08-02 오후 7 03 35" src="https://github.com/Hoya324/SpringNote/assets/96857599/4db728ea-6a14-487a-bcc6-da055a3389ee">
 
-<img width="587" alt="스크린샷 2023-07-30 오후 3 06 20" src="https://github.com/Hoya324/SpringNote/assets/96857599/ba226bb7-422d-4044-8b06-01257035b5ff">
+<img width="589" alt="스크린샷 2023-08-02 오후 7 03 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/224e6357-a731-41c0-b097-2e1491e81341">
 
 **캐시가 없을 때 특징**
 - 데이터가 변경되지 않아도 계속 네트워크를 통해서 데이터를 다운로드 받아야 한다. 
@@ -1565,15 +1565,15 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 
 **첫 번째 요청 - 캐시의 생명 주기를 설정하고 데이터를 저장해둠**
 
-<img width="603" alt="스크린샷 2023-07-30 오후 3 09 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/8b4ff496-0838-4118-82f6-efd808946f8f">
+<img width="590" alt="스크린샷 2023-08-02 오후 7 04 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/93b8c246-9000-4916-a426-2f3ac7fc0bb4">
 
-<img width="598" alt="스크린샷 2023-07-30 오후 3 10 05" src="https://github.com/Hoya324/SpringNote/assets/96857599/fa4190e1-e695-4772-aeed-e7e761525b0f">
+<img width="564" alt="스크린샷 2023-08-02 오후 7 05 11" src="https://github.com/Hoya324/SpringNote/assets/96857599/0ab8acc4-57c2-4e4f-a422-c75c9db7aeec">
 
 **두 번째 요청 - 브라우저 캐시에 저장되어있는 데이터는 바로 응답함.**
 
-<img width="521" alt="스크린샷 2023-07-30 오후 3 10 56" src="https://github.com/Hoya324/SpringNote/assets/96857599/6c15ac21-6911-4ef0-b490-cec5463e49fa">
+<img width="492" alt="스크린샷 2023-08-02 오후 7 05 42" src="https://github.com/Hoya324/SpringNote/assets/96857599/5b829e41-e1ec-4064-bdb8-229202950ad8">
 
-<img width="509" alt="스크린샷 2023-07-30 오후 3 11 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/72bd784b-ef8b-4d68-96f3-48432f1c29db">
+<img width="500" alt="스크린샷 2023-08-02 오후 7 05 51" src="https://github.com/Hoya324/SpringNote/assets/96857599/59e15a94-3bd0-4eef-a7e6-d215a769194f">
 
 **캐시를 적용했을 때 특징**
 - 캐시 덕분에 캐시 가능 시간동안 네트워크를 사용하지 않아도 된다. 
@@ -1583,11 +1583,11 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
  
 **세 번째 요청 - 캐시 시간 초과**
 
-<img width="515" alt="스크린샷 2023-07-30 오후 3 14 55" src="https://github.com/Hoya324/SpringNote/assets/96857599/393bfebc-2e82-4306-9ff0-de2ea106d2d3">
+<img width="494" alt="스크린샷 2023-08-02 오후 7 06 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/2a05a33e-287f-4fa2-8779-6d2f0fb28892">
 
-<img width="610" alt="스크린샷 2023-07-30 오후 3 15 10" src="https://github.com/Hoya324/SpringNote/assets/96857599/a2d41e4b-b69b-4d21-98a0-6d45d50be8f5">
+<img width="588" alt="스크린샷 2023-08-02 오후 7 06 22" src="https://github.com/Hoya324/SpringNote/assets/96857599/44dcbf10-1d65-45e2-967f-c94439b45ed5">
 
-<img width="602" alt="스크린샷 2023-07-30 오후 3 16 07" src="https://github.com/Hoya324/SpringNote/assets/96857599/1e4b36c2-3607-4be9-a9b8-6a4f2f91b441">
+<img width="562" alt="스크린샷 2023-08-02 오후 7 06 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/7f63e974-550e-43bd-b692-a003d6c673a1">
 
 **캐시 시간 초과**
 - 캐시 유효 시간이 초과하면, 서버를 통해 데이터를 다시 조회하고, 캐시를 갱신한다. 
@@ -1613,32 +1613,32 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 
 **첫 번째 요청**
 
-<img width="632" alt="스크린샷 2023-07-30 오후 4 29 24" src="https://github.com/Hoya324/SpringNote/assets/96857599/d54dcbb3-0feb-456b-9133-0a2b5eab8531">
+<img width="585" alt="스크린샷 2023-08-02 오후 7 14 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/d6898b69-bcf4-43d8-ad99-b76e0c2e8821">
 
 **캐시 유효시간 안에는 그대로 캐시 데이터 사용**
 
-<img width="619" alt="스크린샷 2023-07-30 오후 4 30 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/199d3d3f-d6ab-4a04-b705-8b9cbf8d11ed">
+<img width="582" alt="스크린샷 2023-08-02 오후 7 08 36" src="https://github.com/Hoya324/SpringNote/assets/96857599/ce14aa8f-6da1-4cbd-b6e1-0986ab1dcefa">
 
 **두 번째 요청 - 캐시 시간 초과**
 
-<img width="516" alt="스크린샷 2023-07-30 오후 4 31 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/1cc9ba89-f581-4d87-bee5-6702417d6f6f">
+<img width="497" alt="스크린샷 2023-08-02 오후 7 09 04" src="https://github.com/Hoya324/SpringNote/assets/96857599/2e5195b5-67d9-4e7b-8ed7-6cc4334214d2">
 
-<img width="518" alt="스크린샷 2023-07-30 오후 4 31 44" src="https://github.com/Hoya324/SpringNote/assets/96857599/7bde21b8-e27b-4115-8d2f-06dff509c086">
+<img width="500" alt="스크린샷 2023-08-02 오후 7 09 11" src="https://github.com/Hoya324/SpringNote/assets/96857599/1c46b45c-68e1-4e4d-8d9f-e6dd21f538e7">
 
 **데이터의 최종 수정일을 확인함.**
 
-<img width="507" alt="스크린샷 2023-07-30 오후 4 36 59" src="https://github.com/Hoya324/SpringNote/assets/96857599/d6e41c5d-8284-4c0e-908d-2cba4bf0b2a0">
+<img width="491" alt="스크린샷 2023-08-02 오후 7 09 29" src="https://github.com/Hoya324/SpringNote/assets/96857599/f6c6b1bc-46c1-4519-8c8c-cea37f905047">
 
-<img width="523" alt="스크린샷 2023-07-30 오후 4 37 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/6b3659eb-5ba0-4632-8d58-91649c11fe40">
+<img width="497" alt="스크린샷 2023-08-02 오후 7 09 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/2b53fda3-bd2f-40e1-9791-5c2ee3a3d77f">
 
 **304 Not Modified를 내보낸다.**
 - 단, HTTP Body가 없이 내보낸다.
 
-<img width="641" alt="스크린샷 2023-07-30 오후 4 37 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/d7486fb0-6388-4bce-9247-7688a5ccf950">
+<img width="624" alt="스크린샷 2023-08-02 오후 7 10 09" src="https://github.com/Hoya324/SpringNote/assets/96857599/6d76fa33-149e-408f-82f8-4fa4646b271a">
 
 **응답 결과를 재사용하고, 헤더 데이터를 갱신한다.**
 
-<img width="652" alt="스크린샷 2023-07-30 오후 4 38 23" src="https://github.com/Hoya324/SpringNote/assets/96857599/5e3a057b-aaaa-4972-8cab-75028de77473">
+<img width="615" alt="스크린샷 2023-08-02 오후 7 10 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/b634e31c-49cf-48d8-ae0b-9244653d7373">
 
 **정리**
 - 캐시 유효 시간이 초과해도, 서버의 데이터가 갱신되지 않으면
@@ -1706,34 +1706,34 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 ### 검증 헤더 추가
 **첫 번째 요청 -> ETag 저장**
 
-<img width="624" alt="스크린샷 2023-07-30 오후 4 45 30" src="https://github.com/Hoya324/SpringNote/assets/96857599/e6a26dd7-e977-4717-a4b7-69570493174a">
+<img width="582" alt="스크린샷 2023-08-02 오후 7 16 25" src="https://github.com/Hoya324/SpringNote/assets/96857599/e2304959-b182-4769-b505-a9b07bf0beba">
 
-<img width="610" alt="스크린샷 2023-07-30 오후 4 45 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/0fb0f946-8db0-4801-949b-d3e52e234fc8">
+<img width="580" alt="스크린샷 2023-08-02 오후 7 16 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/f71b63c3-9b59-4d30-8f00-62b0f3d1b83f">
 
 **두 번째 요청 - 캐시 시간 초과**
 
-<img width="506" alt="스크린샷 2023-07-30 오후 4 46 33" src="https://github.com/Hoya324/SpringNote/assets/96857599/e37e8b1e-d488-413f-a4bf-76c8569493a6">
+<img width="506" alt="스크린샷 2023-08-02 오후 7 17 16" src="https://github.com/Hoya324/SpringNote/assets/96857599/13b57be7-9f0d-4967-a069-521770c0ef97">
 
 **요청한 이미지가 가진 ETag와 캐시가 가진 ETag와 동일함**<br>
 **`If-None-Match: "aaaaaaaaaa"` 이기 때문에 일치하지 않으면 성공, 일치하면 실패이다.**
 
-<img width="522" alt="스크린샷 2023-07-30 오후 4 46 54" src="https://github.com/Hoya324/SpringNote/assets/96857599/2fde2481-a8a1-466c-9aae-ac3fd98529ab">
+<img width="493" alt="스크린샷 2023-08-02 오후 7 17 31" src="https://github.com/Hoya324/SpringNote/assets/96857599/eeb7ea65-91ff-4779-9adc-f149a6f41a9f">
 
-<img width="513" alt="스크린샷 2023-07-30 오후 4 47 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/8c4964d1-baa6-43c0-be5b-699c0b443353">
+<img width="496" alt="스크린샷 2023-08-02 오후 7 17 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/9606561e-83ce-48e0-a919-45e5c34de713">
 
 **데이터가 수정되지 않음**
 
-<img width="509" alt="스크린샷 2023-07-30 오후 4 47 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/b8479485-c62f-4548-bf98-215f6682333a">
+<img width="497" alt="스크린샷 2023-08-02 오후 7 17 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/42ff5c0a-75e1-4d64-920d-11b2789dbbc7">
 
 **실패(때문에 304 Not Modified가 뜸)**
 
-<img width="648" alt="스크린샷 2023-07-30 오후 4 51 21" src="https://github.com/Hoya324/SpringNote/assets/96857599/c6be0965-1c44-445b-8241-5890ac3008b5">
+<img width="606" alt="스크린샷 2023-08-02 오후 7 18 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/45f368a7-f0c1-4b8a-ab83-3a2f97f98cf6">
 
 **HTTP Body를 제외하고 전송**
 
-<img width="653" alt="스크린샷 2023-07-30 오후 4 54 08" src="https://github.com/Hoya324/SpringNote/assets/96857599/9dd668ba-555b-4f33-adf9-1edb0e612483">
+<img width="612" alt="스크린샷 2023-08-02 오후 7 18 41" src="https://github.com/Hoya324/SpringNote/assets/96857599/ac78ff2a-668e-4f81-a99e-07d086a57dca">
 
-<img width="311" alt="스크린샷 2023-07-30 오후 4 54 38" src="https://github.com/Hoya324/SpringNote/assets/96857599/710631c2-6e1f-4057-9f6a-347f42a319d5">
+<img width="570" alt="스크린샷 2023-08-02 오후 7 18 52" src="https://github.com/Hoya324/SpringNote/assets/96857599/5d40a734-e0a4-41fd-83c3-5aded0aa77da">
 
 ### ETag, If-None-Match 정리
 - 진짜 단순하게 ETag만 서버에 보내서 같으면 유지, 다르면 다시 받기!
@@ -1792,15 +1792,15 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 - 원 서버(origin) 직접 접근
 -> 오래 걸림
 
-<img width="562" alt="스크린샷 2023-07-30 오후 4 57 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/46ac3fc0-7764-4bff-8301-cecbae3b1d9e">
+<img width="552" alt="스크린샷 2023-08-02 오후 7 19 40" src="https://github.com/Hoya324/SpringNote/assets/96857599/75416de2-065e-44fd-a571-0adc51f19814">
 
 ### 프록시 캐시 도입
 
 **첫 번째 요청**
 
-<img width="615" alt="스크린샷 2023-07-30 오후 4 57 43" src="https://github.com/Hoya324/SpringNote/assets/96857599/6b609c08-0983-4b63-ad85-f65a7fd56939">
+<img width="605" alt="스크린샷 2023-08-02 오후 7 19 52" src="https://github.com/Hoya324/SpringNote/assets/96857599/7d37b01b-913e-4b7e-884a-fbae2e5c7970">
 
-<img width="607" alt="스크린샷 2023-07-30 오후 4 58 48" src="https://github.com/Hoya324/SpringNote/assets/96857599/6ea61986-85aa-4282-89c6-b4aacbad6e65">
+<img width="615" alt="스크린샷 2023-08-02 오후 7 20 00" src="https://github.com/Hoya324/SpringNote/assets/96857599/ef584a13-d8da-475b-b2c6-425dabc18f17">
 
 > 외국의 인기 없는 유튜브 영상을 보면 다운받는 로딩 속도가 느리지만, 한국의 인기 있는 영상을 보면 로딩 속도가 빠른 것이 프록시 캐시 서버 덕분이다.
 
@@ -1846,16 +1846,16 @@ Resolver는 DNS 서버에 대한 클라이언트로 동작한다.
 
 **no-cache 기본 동작**
 
-<img width="624" alt="스크린샷 2023-07-30 오후 5 02 18" src="https://github.com/Hoya324/SpringNote/assets/96857599/ae7804a1-09ec-438c-b094-c4872bef1d7f">
+<img width="605" alt="스크린샷 2023-08-02 오후 7 20 57" src="https://github.com/Hoya324/SpringNote/assets/96857599/0931b856-6109-4200-b951-1d0236ff3ee9">
 
 - 만약, 순간적으로 네트워크가 단절되어 원 서버에 접근이 불가능하다면?
 **Error or 200 OK (오류 보다는 오래된 데이터라도 보여주자)**
 
-<img width="637" alt="스크린샷 2023-07-30 오후 5 02 58" src="https://github.com/Hoya324/SpringNote/assets/96857599/724aa542-ee8e-4c97-9c9c-743824785a71">
+<img width="592" alt="스크린샷 2023-08-02 오후 7 20 46" src="https://github.com/Hoya324/SpringNote/assets/96857599/b6f90d86-9271-49f9-bee7-c0e940cee0b3">
 
 **must-revalidate는 문제가 생기면 오류가 발생하도록 함.**
 
-<img width="622" alt="스크린샷 2023-07-30 오후 5 03 37" src="https://github.com/Hoya324/SpringNote/assets/96857599/c301c258-f55b-447a-8460-a9a08c7e9b78">
+<img width="585" alt="스크린샷 2023-08-02 오후 7 21 13" src="https://github.com/Hoya324/SpringNote/assets/96857599/75d243ce-884f-4e2f-9652-2778a61e9522">
 
 ### [Internet Engineering Task Force (IETF) - HTTP 추가적인 공부](https://datatracker.ietf.org/doc/html/rfc7230)
 
